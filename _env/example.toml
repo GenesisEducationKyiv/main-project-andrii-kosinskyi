@@ -1,0 +1,7 @@
+
+[internalstorage]
+path = "../example.toml"
+
+[converter]
+endpoint = "https://api.coinpaprika.com/v1/price-converter"
+#"https://api.coinpaprika.com/v1/price-converter?base_currency_id=btc-bitcoin&quote_currency_id=uah-ukrainian-hryvnia&amount=1"
