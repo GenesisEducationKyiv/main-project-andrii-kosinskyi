@@ -1,14 +1,17 @@
 package handlers
 
 import (
-	"bitcoin_checker_api/config"
-	"bitcoin_checker_api/internal/models"
-	"bitcoin_checker_api/internal/repositories"
+	"context"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"net/smtp"
+
+	"bitcoin_checker_api/config"
+	"bitcoin_checker_api/internal/models"
+	"bitcoin_checker_api/internal/repositories"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
@@ -24,15 +27,16 @@ func NewHandler(cfg *config.Config, repository repositories.Repository) *Handler
 }
 
 func rate(cfg *config.Config) (string, error) {
+	ctx := context.Background()
 	converter := models.NewConverter()
 	requestURL := fmt.Sprintf("%s%s", cfg.Converter.Endpoint, converter.GetQueryParams())
-	res, err := http.Get(requestURL)
+	res, err := http.NewRequestWithContext(ctx, http.MethodGet, requestURL, nil)
 	if err != nil {
 		return "", err
 	}
 	body, _ := io.ReadAll(res.Body)
 	res.Body.Close()
-	return fmt.Sprintf("%s", body), nil
+	return string(body), nil
 }
 
 func sendMail(email, data string) {
@@ -57,7 +61,7 @@ func sendMail(email, data string) {
 	// Sending email.
 	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error: %s", err) //nolint:forbidigo // log for now
 		return
 	}
 }

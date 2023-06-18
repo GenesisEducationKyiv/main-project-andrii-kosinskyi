@@ -1,11 +1,15 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
+
+	"github.com/pelletier/go-toml/v2"
 )
-import "github.com/pelletier/go-toml/v2"
+
+type Service struct {
+	Port string `toml:"port"`
+}
 
 type Converter struct {
 	Endpoint string `toml:"endpoint"`
@@ -16,6 +20,7 @@ type InternalStorage struct {
 }
 
 type Config struct {
+	Service         Service
 	Converter       Converter
 	InternalStorage InternalStorage
 }
@@ -27,18 +32,19 @@ func (that *Config) Load() error {
 		log.Fatal(err)
 		return err
 	}
-	fmt.Println("HI")
-	if err := toml.Unmarshal(f, that); err != nil {
+
+	if err = toml.Unmarshal(f, that); err != nil {
 		// failed to encode
 		log.Fatal(err)
 		return err
 	}
-	fmt.Println("Bue")
+
 	return nil
 }
 
 func NewConfig() *Config {
 	return &Config{
+		Service:         Service{},
 		Converter:       Converter{},
 		InternalStorage: InternalStorage{},
 	}

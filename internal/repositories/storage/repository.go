@@ -1,13 +1,15 @@
-package internal_storage
+package storage
 
 import (
+	"fmt"
+	"log"
+	"os"
+
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/models"
 	"bitcoin_checker_api/internal/repositories"
-	"fmt"
+
 	"github.com/pelletier/go-toml/v2"
-	"log"
-	"os"
 )
 
 type InternalStorageRepository struct {
@@ -25,7 +27,7 @@ func NewInternalStorageRepository(cfg *config.Config) (repositories.Repository, 
 		return nil, err
 	}
 
-	if err := toml.Unmarshal(f, isr); err != nil {
+	if err = toml.Unmarshal(f, isr); err != nil {
 		// failed to encode
 		log.Fatal(err)
 		return nil, err
@@ -48,7 +50,7 @@ func (that *InternalStorageRepository) Write(email string) error {
 		if err != nil {
 			panic(err)
 		}
-		err = os.WriteFile(that.cfg.InternalStorage.Path, newRecords, 0644)
+		err = os.WriteFile(that.cfg.InternalStorage.Path, newRecords, 0o600)
 		if err != nil {
 			panic(err)
 		}

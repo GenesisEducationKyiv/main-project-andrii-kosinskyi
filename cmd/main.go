@@ -1,11 +1,13 @@
 package main
 
 import (
+	"log"
+
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/handlers"
-	"bitcoin_checker_api/internal/repositories/internal-storage"
+	"bitcoin_checker_api/internal/repositories/storage"
+
 	"github.com/gin-gonic/gin"
-	"log"
 )
 
 func main() {
@@ -14,7 +16,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	repo, err := internal_storage.NewInternalStorageRepository(cfg)
+	repo, err := storage.NewInternalStorageRepository(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,5 +31,8 @@ func main() {
 		v1.POST("/sendEmails", handler.SendEmail)
 	}
 
-	router.Run("localhost:8080")
+	err = router.Run(":" + cfg.Service.Port)
+	if err != nil {
+		return
+	}
 }

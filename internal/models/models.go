@@ -8,7 +8,7 @@ const (
 	amount          = 1
 )
 
-// Converter - struct for build request to thirdpart api
+// Converter - struct for build request to third-part api.
 type Converter struct {
 	baseCurrencyID  string
 	quoteCurrencyID string
@@ -16,7 +16,8 @@ type Converter struct {
 }
 
 func (that *Converter) GetQueryParams() string {
-	return fmt.Sprintf("?base_currency_id=%s&quote_currency_id=%s&amount=%d", that.baseCurrencyID, that.quoteCurrencyID, that.amount)
+	format := "?base_currency_id=%s&quote_currency_id=%s&amount=%d"
+	return fmt.Sprintf(format, that.baseCurrencyID, that.quoteCurrencyID, that.amount)
 }
 
 func NewConverter() *Converter {
@@ -27,7 +28,7 @@ func NewConverter() *Converter {
 	}
 }
 
-// User - struct for create, write, update , delete user
+// User - struct for create, write, update , delete user.
 type User struct {
 	Email string `toml:"email"`
 }
