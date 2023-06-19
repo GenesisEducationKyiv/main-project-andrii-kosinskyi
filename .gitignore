@@ -18,6 +18,6 @@
 # vendor/
 bin/
 build/
-
+app
 # Go workspace file
 go.work

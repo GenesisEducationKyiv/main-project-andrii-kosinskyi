@@ -24,3 +24,8 @@ For check on duplicate user record I used map, but I think better it is binary s
 
 Our entry point in this repo is cmd/main.go in this file we initialiase config, repository an handlers after we use 
 framework GIN for routing
+
+For run project run:
+```
+make run
+```

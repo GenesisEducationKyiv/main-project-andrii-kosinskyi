@@ -8,7 +8,7 @@ import (
 )
 
 type Service struct {
-	Port string `toml:"port"`
+	Port int64 `toml:"port"`
 }
 
 type Converter struct {
@@ -26,7 +26,7 @@ type Config struct {
 }
 
 func (that *Config) Load() error {
-	f, err := os.ReadFile("../_env/example.toml")
+	f, err := os.ReadFile("./_env/example.toml")
 	if err != nil {
 		// failed to create/open the file
 		log.Fatal(err)

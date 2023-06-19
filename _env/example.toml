@@ -2,7 +2,7 @@
 port = 8080
 
 [internalstorage]
-path = "../example.toml"
+path = "example_storage.toml"
 
 [converter]
 endpoint = "https://api.coinpaprika.com/v1/price-converter"

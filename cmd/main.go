@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strconv"
 
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/handlers"
@@ -31,7 +32,7 @@ func main() {
 		v1.POST("/sendEmails", handler.SendEmail)
 	}
 
-	err = router.Run(":" + cfg.Service.Port)
+	err = router.Run(":" + strconv.FormatInt(cfg.Service.Port, 10))
 	if err != nil {
 		return
 	}
