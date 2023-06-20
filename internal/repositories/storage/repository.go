@@ -5,11 +5,11 @@ import (
 	"log"
 	"os"
 
+	"github.com/pelletier/go-toml/v2"
+
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/models"
 	"bitcoin_checker_api/internal/repositories"
-
-	"github.com/pelletier/go-toml/v2"
 )
 
 type InternalStorageRepository struct {
@@ -50,7 +50,7 @@ func (that *InternalStorageRepository) Write(email string) error {
 		if err != nil {
 			panic(err)
 		}
-		err = os.WriteFile(that.cfg.InternalStorage.Path, newRecords, 0o600)
+		err = os.WriteFile(that.cfg.InternalStorage.Path, newRecords, 0o666)
 		if err != nil {
 			panic(err)
 		}

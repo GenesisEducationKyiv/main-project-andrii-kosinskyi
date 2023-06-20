@@ -18,6 +18,9 @@
 # vendor/
 bin/
 build/
+.idea/
+.DS_Store
 app
+
 # Go workspace file
 go.work
