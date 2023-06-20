@@ -50,7 +50,7 @@ func (that *InternalStorageRepository) Write(email string) error {
 		if err != nil {
 			panic(err)
 		}
-		err = os.WriteFile(that.cfg.InternalStorage.Path, newRecords, 0o666)
+		err = os.WriteFile(that.cfg.InternalStorage.Path, newRecords, 0600)
 		if err != nil {
 			panic(err)
 		}
