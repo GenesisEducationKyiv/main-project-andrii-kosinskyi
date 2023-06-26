@@ -5,7 +5,7 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /go/src/bitcoin_checker_api
 
-COPY . .
+COPY .. .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o /cmd
 

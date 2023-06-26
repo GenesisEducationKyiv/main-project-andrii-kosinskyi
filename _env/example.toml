@@ -1,9 +1,15 @@
-[service]
+[server]
 port = 8080
 
-[internalstorage]
-path = "example_storage.toml"
+[storage]
+path = "./storage.json"
 
-[converter]
-endpoint = "https://api.coinpaprika.com/v1/price-converter"
-#"https://api.coinpaprika.com/v1/price-converter?base_currency_id=btc-bitcoin&quote_currency_id=uah-ukrainian-hryvnia&amount=1"
+[exchangerate]
+url_mask = "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1"
+in_rate_name = "btc-bitcoin"
+out_rate_name = "uah-ukrainian-hryvnia"
+
+[emailservice]
+api_key="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"
+from_name="Andrii Kosinskyi"
+from_address="kosinskiy.andrey@ukr.net"

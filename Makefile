@@ -19,3 +19,23 @@ test:
 .PHONY: lint
 lint:
 	@golangci-lint run ./... --config .golangci.yml
+
+.PHONY: rate
+rate:
+	curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://localhost:8080/api/rate
+
+.PHONY: subscribe
+subscribe:
+	curl -X POST -F 'email=kosinskiy.andrey@ukr.net' http://localhost:8080/api/subscribe
+
+.PHONY: subscribe2
+subscribe2:
+	curl -X POST -F 'email=andrey.kosinskiy@hellotickets.com' http://localhost:8080/api/subscribe
+
+.PHONY: subscribeInvalid
+subscribeInvalid:
+	curl -X POST -F 'email=andrey.kosinskiy' http://localhost:8080/api/subscribe
+
+.PHONY: sendMails
+sendMails:
+	curl -X POST http://localhost:8080/api/sendEmails
