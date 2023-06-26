@@ -21,6 +21,7 @@ build/
 .idea/
 .DS_Store
 app
+storage.json
 
 # Go workspace file
 go.work

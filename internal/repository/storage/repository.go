@@ -26,8 +26,18 @@ func NewStorageRepository(cfg *config.Storage) (repository.Repository, error) {
 
 	f, err := os.ReadFile(cfg.Path)
 	if err != nil {
-		log.Fatal(err)
-		return nil, err
+		if !os.IsNotExist(err) {
+			log.Fatal(err)
+			return nil, err
+		}
+
+		if os.IsNotExist(err) {
+			_, err := os.Create(cfg.Path)
+			if err != nil {
+				log.Fatal(err)
+				return nil, err
+			}
+		}
 	}
 
 	if len(f) != 0 {

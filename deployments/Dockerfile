@@ -1,14 +1,11 @@
 
 FROM golang:1.20.5-alpine as build-stage
 
-RUN apk --no-cache add ca-certificates
-
-WORKDIR /go/src/bitcoin_checker_api
-
-COPY .. .
-
+WORKDIR /go/src
+COPY ./go.mod ./go.mod
+RUN go mod download
+COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o /cmd
-
 
 #
 # final build stage
