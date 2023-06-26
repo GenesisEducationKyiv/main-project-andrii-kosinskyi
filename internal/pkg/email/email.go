@@ -34,11 +34,11 @@ func (that *EmailService) Send(email, data string) error {
 	plainTextContent := "Current exchange rate"
 	htmlContent := data
 	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
-	client := sendgrid.NewSendClient(that.APIKey) //nolint:typecheck
+	client := sendgrid.NewSendClient(that.APIKey)
 	response, err := client.Send(message)
 	if err != nil || !SuccessSentStatusCode(response.StatusCode) {
 		fmt.Fprintf(os.Stderr, "error EmailService.Send: %s.(Status code: %d)", err, response.StatusCode)
-		return fmt.Errorf("error: %s, status code: %d ", err, response.StatusCode)
+		return fmt.Errorf("error: %w, status code: %d ", err, response.StatusCode)
 	}
 	log.Printf("Email sended to %s successfuly.(Status code: %d)", email, response.StatusCode)
 	return nil

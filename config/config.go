@@ -54,7 +54,7 @@ func (that *Config) Load() error {
 		return err
 	}
 
-	if err = toml.Unmarshal(f, that); err != nil { //nolint:typecheck
+	if err = toml.Unmarshal(f, that); err != nil {
 		// failed to encode
 		log.Fatal(err)
 		return err
