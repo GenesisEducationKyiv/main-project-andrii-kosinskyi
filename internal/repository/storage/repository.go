@@ -11,14 +11,14 @@ import (
 	"bitcoin_checker_api/internal/repository"
 )
 
-type StorageRepository struct {
+type Repository struct {
 	Records    []*model.User
 	RecordsMap map[string]struct{}
 	Cfg        *config.Storage
 }
 
 func NewStorageRepository(cfg *config.Storage) (repository.Repository, error) {
-	sr := &StorageRepository{
+	sr := &Repository{
 		Cfg:        cfg,
 		RecordsMap: make(map[string]struct{}),
 		Records:    make([]*model.User, 0),
@@ -54,7 +54,7 @@ func NewStorageRepository(cfg *config.Storage) (repository.Repository, error) {
 	return sr, nil
 }
 
-func (that *StorageRepository) Write(email string) error {
+func (that *Repository) Write(email string) error {
 	if _, ok := that.RecordsMap[email]; ok {
 		return fmt.Errorf("e-mail вже є в базі даних")
 	}
@@ -74,6 +74,6 @@ func (that *StorageRepository) Write(email string) error {
 	return nil
 }
 
-func (that *StorageRepository) ReadAll() []*model.User {
+func (that *Repository) ReadAll() []*model.User {
 	return that.Records
 }

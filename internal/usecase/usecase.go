@@ -7,34 +7,34 @@ import (
 
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/pkg/email"
-	exchange_rate "bitcoin_checker_api/internal/pkg/exchange-rate"
+	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/repository"
 	"bitcoin_checker_api/internal/validator"
 )
 
 type UseCase struct {
 	repository   repository.Repository
-	exchangeRate exchange_rate.ExchangeRater
+	exchangeRate exchangerate.ExchangeRater
 	emailService email.Emailer
 }
 
-type UseCaseConfig struct {
+type Config struct {
 	ExchangeRate *config.ExchangeRate
 	EmailService *config.EmailService
 }
 
-func NewUseCase(c *UseCaseConfig, r repository.Repository) *UseCase {
+func NewUseCase(c *Config, r repository.Repository) *UseCase {
 	return &UseCase{
 		repository:   r,
-		exchangeRate: exchange_rate.NewExchangeRate(c.ExchangeRate),
-		emailService: email.NewEmailService(c.EmailService),
+		exchangeRate: exchangerate.NewExchangeRate(c.ExchangeRate),
+		emailService: email.NewService(c.EmailService),
 	}
 }
 
 func (that *UseCase) SubscribeEmailOnExchangeRate(e string) error {
 	validEmail, ok := validator.ValidMailAddress(e)
 	if !ok {
-		return fmt.Errorf("inalid Email address: %s", e)
+		return fmt.Errorf("invalid Email address: %s", e)
 	}
 	return that.repository.Write(validEmail)
 }

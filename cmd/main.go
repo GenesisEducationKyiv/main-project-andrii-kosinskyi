@@ -61,7 +61,7 @@ func initApp(cfg *config.Config) http.Handler {
 		log.Fatal(err)
 	}
 
-	useCaseConfig := &usecase.UseCaseConfig{
+	useCaseConfig := &usecase.Config{
 		ExchangeRate: &cfg.ExchangeRate,
 		EmailService: &cfg.EmailService,
 	}

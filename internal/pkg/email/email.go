@@ -13,21 +13,21 @@ import (
 	"github.com/sendgrid/sendgrid-go"
 )
 
-type EmailService struct {
+type Service struct {
 	APIKey      string
 	FromAddress string
 	FromName    string
 }
 
-func NewEmailService(c *config.EmailService) *EmailService {
-	return &EmailService{
+func NewService(c *config.EmailService) *Service {
+	return &Service{
 		APIKey:      c.APIKey,
 		FromAddress: c.FromAddress,
 		FromName:    c.FromName,
 	}
 }
 
-func (that *EmailService) Send(email, data string) error {
+func (that *Service) Send(email, data string) error {
 	from := mail.NewEmail(that.FromName, that.FromAddress)
 	subject := "Current exchange rate by your subscription"
 	to := mail.NewEmail("Dear customer", email)
