@@ -19,7 +19,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//nolint:gocritic,gosec,gomnd,gosimple,govet
+//nolint:gocritic,gosec,gomnd,gosimple,govet,staticcheck // issues only in graceful shutdown process
 func main() {
 	cfg := config.NewConfig()
 	if err := cfg.Load(); err != nil {
