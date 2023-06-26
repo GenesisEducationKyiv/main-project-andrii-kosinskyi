@@ -1,9 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
+	"net/http"
+	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
+	"time"
 
 	"bitcoin_checker_api/internal/usecase"
 
@@ -20,6 +25,36 @@ func main() {
 		log.Fatal(err)
 	}
 
+	srv := &http.Server{
+		Addr:    ":" + strconv.FormatInt(cfg.Server.Port, 10),
+		Handler: initApp(cfg),
+	}
+
+	go func() {
+		// service connections
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutdown Server ...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal("Server Shutdown:", err)
+	}
+	// catching ctx.Done(). timeout of 5 seconds.
+	select {
+	case <-ctx.Done():
+		log.Println("timeout of 5 seconds.")
+	}
+	log.Println("Server exiting")
+}
+
+func initApp(cfg *config.Config) http.Handler {
 	repo, err := storage.NewStorageRepository(&cfg.Storage)
 	if err != nil {
 		log.Fatal(err)
@@ -40,9 +75,5 @@ func main() {
 		v1.POST("/sendEmails", h.SendEmails)
 	}
 
-	fmt.Printf(strconv.FormatInt(cfg.Server.Port, 10))
-	err = router.Run(":" + strconv.FormatInt(cfg.Server.Port, 10))
-	if err != nil {
-		return
-	}
+	return router
 }

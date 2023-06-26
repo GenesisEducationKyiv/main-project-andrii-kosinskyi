@@ -25,7 +25,7 @@ func NewHandler(c *config.Config, u *usecase.UseCase) *Handler {
 }
 
 func (that *Handler) Rate(c *gin.Context) {
-	log.Printf("endpoint: %s request: %s", c.Request.Host+c.Request.URL.Path, "")
+	log.Printf("endpoint: %s request: %s", c.Request.Host+c.Request.URL.Path, http.NoBody)
 	exchangeRate, err := that.useCase.ExchangeRate()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", c.Request.Host+c.Request.URL.Path, err)
@@ -37,7 +37,7 @@ func (that *Handler) Rate(c *gin.Context) {
 }
 
 func (that *Handler) Subscription(c *gin.Context) {
-	log.Printf("endpoint: %s request: %s", c.Request.Host+c.Request.URL.Path, "")
+	log.Printf("endpoint: %s request: %s", c.Request.Host+c.Request.URL.Path, http.NoBody)
 	email := c.PostForm("email")
 	if err := that.useCase.SubscribeEmailOnExchangeRate(email); err != nil {
 		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", c.Request.Host+c.Request.URL.Path, err)
@@ -49,13 +49,13 @@ func (that *Handler) Subscription(c *gin.Context) {
 }
 
 func (that *Handler) SendEmails(c *gin.Context) {
-	log.Printf("endpoint: %s request: %s", c.Request.Host+c.Request.URL.Path, "")
+	log.Printf("endpoint: %s request: %s", c.Request.Host+c.Request.URL.Path, http.NoBody)
 	err := that.useCase.SendEmailsWithExchangeRate()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", c.Request.Host+c.Request.URL.Path, err)
 		c.IndentedJSON(http.StatusConflict, ErrEmailsNotSent)
 		return
 	}
-	log.Printf("endpoint: %s request: %s", c.Request.Host+c.Request.URL.Path, EmailsSended)
+	log.Printf("endpoint: %s response: %s", c.Request.Host+c.Request.URL.Path, EmailsSended)
 	c.IndentedJSON(http.StatusOK, EmailsSended)
 }

@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"fmt"
 
 	"bitcoin_checker_api/config"
@@ -31,7 +32,6 @@ func NewUseCase(c *UseCaseConfig, r repository.Repository) *UseCase {
 
 func (that *UseCase) SubscribeEmailOnExchangeRate(e string) error {
 	validEmail, ok := validator.ValidMailAddress(e)
-	fmt.Println(validEmail, ok)
 	if !ok {
 		return fmt.Errorf("inalid Email address: %s", e)
 	}
@@ -44,7 +44,7 @@ func (that *UseCase) SubscribeEmailOnExchangeRate(e string) error {
 func (that *UseCase) SendEmailsWithExchangeRate() error {
 	users := that.repository.ReadAll()
 	if len(users) == 0 {
-		return nil
+		return errors.New("storage is empty")
 	}
 
 	data, err := that.ExchangeRate()

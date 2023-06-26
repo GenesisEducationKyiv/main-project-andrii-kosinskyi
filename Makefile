@@ -8,18 +8,24 @@ build:
 run:build
 	 ./build/${BINARY_NAME}
 
-.PHONY: format
-format:
-	@gofumpt -l -w .
+.PHONY: docker
+docker:
+	@docker build -t bitcoin-checker-app . -f deployments/Dockerfile
+	@docker run -d -p 8080:8080 bitcoin-checker-app
 
 .PHONY: test
 test:
 	@go test -v ./... -cover
 
+.PHONY: format
+format:
+	@gofumpt -l -w .
+
 .PHONY: lint
 lint:
 	@golangci-lint run ./... --config .golangci.yml
 
+# curl call for test endpoints
 .PHONY: rate
 rate:
 	curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://localhost:8080/api/rate
