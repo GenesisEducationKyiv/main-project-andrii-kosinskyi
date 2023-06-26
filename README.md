@@ -1,31 +1,48 @@
 # bitcoin_checker_api
 
-This repo consists of
-_env
-cmd
-    main.go
-config
-    config.go
-internal
-    handlers
-    models
-    repositories
+## About The Project:
+Project can be use for checking exchange rates form one to another currency.
+Evaluable endpoints:
+ - `/api/rate` - get rate
+ - `/api/subscribe` - subscribe user on emails
+ - `/api/sendEmails` - send emails to our subscribers
 
-In _env folder we have configuration.
-In config folder we have model for config
-In handlers folder we have handler and utils
-In models we have model for user and convertor
-In repositories we have interface for internal-storage
+## How to run:
+For run application use make command:
 
-In this project I used https://gin-gonic.com/
-Information about bitcoin I got from  
-
-For check on duplicate user record I used map, but I think better it is binary search.
-
-Our entry point in this repo is cmd/main.go in this file we initialiase config, repository an handlers after we use 
-framework GIN for routing
-
-For run project run:
-```
+On locale machine
+```azure
 make run
 ```
+On docker
+```azure
+make docker
+```
+## Installation:
+In _env/example.toml add information about:
+
+Enter path for internal storage:
+```
+[storage]
+path = "./storage.json"
+```
+
+Enter your endpoint for cheking rates:
+```
+[exchangerate]
+url_mask = "URL_WITH_MASK"
+in_rate_name = "IN_RATE_NAME"
+out_rate_name = "OUT_RATE_NAME"
+```
+Enter your SendGrid credential
+```
+[emailservice]
+api_key="API_KEY"
+from_name="FROM_NAME"
+from_address="FROM_ADDRESS"
+```
+
+## Roadmap:
+- [X] Refactor old project structure and add layer for app
+- [ ] Add tests
+- [ ] Review code and try implement SOLID and GRASP
