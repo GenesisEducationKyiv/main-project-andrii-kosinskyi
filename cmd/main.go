@@ -19,7 +19,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// nolint
+//nolint:all
 func main() {
 	cfg := config.NewConfig()
 	if err := cfg.Load(); err != nil {
