@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -35,19 +36,16 @@ func (that *UseCase) SubscribeEmailOnExchangeRate(e string) error {
 	if !ok {
 		return fmt.Errorf("inalid Email address: %s", e)
 	}
-	if err := that.repository.Write(validEmail); err != nil {
-		return err
-	}
-	return nil
+	return that.repository.Write(validEmail)
 }
 
-func (that *UseCase) SendEmailsWithExchangeRate() error {
+func (that *UseCase) SendEmailsWithExchangeRate(ctx context.Context) error {
 	users := that.repository.ReadAll()
 	if len(users) == 0 {
 		return errors.New("storage is empty")
 	}
 
-	data, err := that.ExchangeRate()
+	data, err := that.ExchangeRate(ctx)
 	if err != nil {
 		return err
 	}
@@ -60,8 +58,8 @@ func (that *UseCase) SendEmailsWithExchangeRate() error {
 	return nil
 }
 
-func (that *UseCase) ExchangeRate() (string, error) {
-	data, err := that.exchangeRate.Get()
+func (that *UseCase) ExchangeRate(ctx context.Context) (string, error) {
+	data, err := that.exchangeRate.Get(ctx)
 	if err != nil {
 		return "", err
 	}

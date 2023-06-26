@@ -32,7 +32,7 @@ func NewStorageRepository(cfg *config.Storage) (repository.Repository, error) {
 		}
 
 		if os.IsNotExist(err) {
-			_, err := os.Create(cfg.Path)
+			_, err = os.Create(cfg.Path)
 			if err != nil {
 				log.Fatal(err)
 				return nil, err

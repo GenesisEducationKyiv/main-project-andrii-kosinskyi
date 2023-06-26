@@ -26,7 +26,7 @@ func NewHandler(c *config.Config, u *usecase.UseCase) *Handler {
 
 func (that *Handler) Rate(c *gin.Context) {
 	log.Printf("endpoint: %s request: %s", c.Request.Host+c.Request.URL.Path, http.NoBody)
-	exchangeRate, err := that.useCase.ExchangeRate()
+	exchangeRate, err := that.useCase.ExchangeRate(c)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", c.Request.Host+c.Request.URL.Path, err)
 		c.IndentedJSON(http.StatusBadRequest, ErrInvStatVal)
@@ -50,7 +50,7 @@ func (that *Handler) Subscription(c *gin.Context) {
 
 func (that *Handler) SendEmails(c *gin.Context) {
 	log.Printf("endpoint: %s request: %s", c.Request.Host+c.Request.URL.Path, http.NoBody)
-	err := that.useCase.SendEmailsWithExchangeRate()
+	err := that.useCase.SendEmailsWithExchangeRate(c)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", c.Request.Host+c.Request.URL.Path, err)
 		c.IndentedJSON(http.StatusConflict, ErrEmailsNotSent)

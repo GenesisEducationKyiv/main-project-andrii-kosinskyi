@@ -1,7 +1,6 @@
 package email
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -39,7 +38,7 @@ func (that *EmailService) Send(email, data string) error {
 	response, err := client.Send(message)
 	if err != nil || !SuccessSentStatusCode(response.StatusCode) {
 		fmt.Fprintf(os.Stderr, "error EmailService.Send: %s.(Status code: %d)", err, response.StatusCode)
-		return errors.New(fmt.Sprintf("error: %s, status code: %d ", err, response.StatusCode))
+		return fmt.Errorf("error: %s, status code: %d ", err, response.StatusCode)
 	}
 	log.Printf("Email sended to %s successfuly.(Status code: %d)", email, response.StatusCode)
 	return nil

@@ -1,5 +1,7 @@
 package exchange_rate
 
+import "context"
+
 type ExchangeRater interface {
-	Get() (string, error)
+	Get(ctx context.Context) (string, error)
 }
