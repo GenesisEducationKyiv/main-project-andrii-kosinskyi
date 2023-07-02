@@ -1,22 +1,26 @@
 package validator
 
 import (
+	"errors"
 	"net/mail"
 	"net/url"
 )
 
-func ValidMailAddress(address string) (string, bool) {
-	addr, err := mail.ParseAddress(address)
-	if err != nil {
-		return "", false
+var (
+	ErrInvalidMailAddress = errors.New("invalid mail address")
+	ErrInvalidURL         = errors.New("invalid url")
+)
+
+func ValidMailAddress(address string) error {
+	if _, err := mail.ParseAddress(address); err != nil {
+		return ErrInvalidMailAddress
 	}
-	return addr.Address, true
+	return nil
 }
 
-func ValidURLWithError(rawURL string) (string, error) {
-	u, err := url.ParseRequestURI(rawURL)
-	if err != nil {
-		return "", err
+func ValidURL(rawURL string) error {
+	if _, err := url.ParseRequestURI(rawURL); err != nil {
+		return ErrInvalidURL
 	}
-	return u.Path, err
+	return nil
 }

@@ -1,15 +1,12 @@
 package usecase
 
 import (
-	"context"
-	"errors"
-	"fmt"
-
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/pkg/email"
 	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/repository"
-	"bitcoin_checker_api/internal/validator"
+	"context"
+	"errors"
 )
 
 type UseCase struct {
@@ -32,11 +29,7 @@ func NewUseCase(c *Config, r repository.Repository) *UseCase {
 }
 
 func (that *UseCase) SubscribeEmailOnExchangeRate(e string) error {
-	validEmail, ok := validator.ValidMailAddress(e)
-	if !ok {
-		return fmt.Errorf("invalid Email address: %s", e)
-	}
-	return that.repository.Write(validEmail)
+	return that.repository.Write(e)
 }
 
 func (that *UseCase) SendEmailsWithExchangeRate(ctx context.Context) error {

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -10,6 +11,12 @@ import (
 	"github.com/pelletier/go-toml/v2"
 )
 
+var ErrEmptyConfig = errors.New("one or more fields empty in config")
+
+type EmptyConfigChecker interface {
+	Empty() error
+}
+
 type Server struct {
 	Port int64 `toml:"port"`
 }
@@ -18,6 +25,14 @@ type ExchangeRate struct {
 	URLMask string `toml:"url_mask"`
 	InRate  string `toml:"in_rate_name"`
 	OutRate string `toml:"out_rate_name"`
+	EmptyConfigChecker
+}
+
+func (that *ExchangeRate) Empty() error {
+	if that.URLMask == "" || that.InRate == "" || that.OutRate == "" {
+		return ErrEmptyConfig
+	}
+	return nil
 }
 
 type Storage struct {
@@ -28,6 +43,14 @@ type EmailService struct {
 	APIKey      string `toml:"api_key"`
 	FromAddress string `toml:"from_address"`
 	FromName    string `toml:"from_name"`
+	EmptyConfigChecker
+}
+
+func (that *EmailService) Empty() error {
+	if that.APIKey == "" || that.FromName == "" || that.FromAddress == "" {
+		return ErrEmptyConfig
+	}
+	return nil
 }
 
 func NewConfig() *Config {
@@ -68,8 +91,16 @@ func (that *Config) Load() error {
 }
 
 func (that *Config) validConfig() error {
+	if err := that.EmailService.Empty(); err != nil {
+		return err
+	}
+
+	if err := that.ExchangeRate.Empty(); err != nil {
+		return err
+	}
+
 	rawURL := fmt.Sprintf(that.ExchangeRate.URLMask, that.ExchangeRate.InRate, that.ExchangeRate.OutRate)
-	if _, err := validator.ValidURLWithError(rawURL); err != nil {
+	if err := validator.ValidURL(rawURL); err != nil {
 		return err
 	}
 	return nil

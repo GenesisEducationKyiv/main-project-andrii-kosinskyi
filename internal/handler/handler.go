@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bitcoin_checker_api/internal/validator"
 	"fmt"
 	"log"
 	"net/http"
@@ -37,8 +38,13 @@ func (that *Handler) Rate(c *gin.Context) {
 }
 
 func (that *Handler) Subscription(c *gin.Context) {
-	log.Printf("endpoint: %s request: %s", c.Request.Host+c.Request.URL.Path, http.NoBody)
+	log.Printf("endpoint: %s request: %s", c.Request.Host+c.Request.URL.Path, c.PostForm("email"))
 	email := c.PostForm("email")
+	if err := validator.ValidMailAddress(email); err != nil {
+		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", c.Request.Host+c.Request.URL.Path, err)
+		c.IndentedJSON(http.StatusConflict, ErrInvSubEmail)
+		return
+	}
 	if err := that.useCase.SubscribeEmailOnExchangeRate(email); err != nil {
 		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", c.Request.Host+c.Request.URL.Path, err)
 		c.IndentedJSON(http.StatusConflict, ErrInvSubEmail)
@@ -56,6 +62,6 @@ func (that *Handler) SendEmails(c *gin.Context) {
 		c.IndentedJSON(http.StatusConflict, ErrEmailsNotSent)
 		return
 	}
-	log.Printf("endpoint: %s response: %s", c.Request.Host+c.Request.URL.Path, EmailsSended)
-	c.IndentedJSON(http.StatusOK, EmailsSended)
+	log.Printf("endpoint: %s response: %s", c.Request.Host+c.Request.URL.Path, EmailsSent)
+	c.IndentedJSON(http.StatusOK, EmailsSent)
 }
