@@ -1,6 +1,7 @@
 package main
 
 import (
+	repository "bitcoin_checker_api/internal/repository/storage"
 	"context"
 	"log"
 	"net/http"
@@ -14,8 +15,6 @@ import (
 
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/handler"
-	"bitcoin_checker_api/internal/repository/storage"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -56,7 +55,7 @@ func main() {
 }
 
 func initApp(cfg *config.Config) http.Handler {
-	repo, err := storage.NewStorageRepository(&cfg.Storage)
+	repo, err := repository.NewLocalRepository(&cfg.Storage)
 	if err != nil {
 		log.Fatal(err)
 	}
