@@ -21,11 +21,10 @@ func NewMockService(c *config.EmailService) *MockService {
 	}
 }
 
-func (that *MockService) Send(email, data string) error {
-	fmt.Println("Send to: ", email)
-	fmt.Println("send body: ", data)
+func (that *MockService) Send(_, _ string) error {
+
 	if that.APIKey == "" {
-		return fmt.Errorf("error: not send, status code: %d ", 404)
+		return fmt.Errorf("error: not send, status code: %d ", http.StatusBadRequest)
 	}
 	return nil
 }

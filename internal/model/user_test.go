@@ -1,6 +1,9 @@
-package model
+package model_test
 
-import "testing"
+import (
+	"bitcoin_checker_api/internal/model"
+	"testing"
+)
 
 func TestNewUser(t *testing.T) {
 	tests := []struct {
@@ -13,7 +16,7 @@ func TestNewUser(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tUser := NewUser(tt.email); tUser.Email != tt.want {
+			if tUser := model.NewUser(tt.email); tUser.Email != tt.want {
 				t.Errorf("TestNewUser() name = %v got = %s want = %s", tt.name, tUser.Email, tt.want)
 			}
 		})

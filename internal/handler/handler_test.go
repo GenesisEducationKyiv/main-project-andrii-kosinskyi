@@ -1,6 +1,7 @@
-package handler
+package handler_test
 
 import (
+	"bitcoin_checker_api/internal/handler"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -36,7 +37,7 @@ func TestHandler_Rate(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
 
 	r := SetUpRouter()
 	r.GET("/", h.Rate)
@@ -63,14 +64,14 @@ func TestHandler_RateWithError(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
 
 	r := SetUpRouter()
 	r.GET("/", h.Rate)
 	req, _ := http.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
-	if w.Code != http.StatusBadRequest || !strings.Contains(w.Body.String(), ErrInvStatVal) {
+	if w.Code != http.StatusBadRequest || !strings.Contains(w.Body.String(), handler.ErrInvStatVal) {
 		t.Errorf("TestHandler_Rate status code: %d  Body: %s", w.Code, w.Body.String())
 	}
 }
@@ -90,7 +91,7 @@ func TestHandler_Subscription(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.Subscription)
@@ -101,7 +102,7 @@ func TestHandler_Subscription(t *testing.T) {
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
-	if w.Code != http.StatusOK && w.Body.String() != EmailAdded {
+	if w.Code != http.StatusOK && w.Body.String() != handler.EmailAdded {
 		t.Errorf("TestHandler_Rate status code: %d  Body: %s", w.Code, w.Body.String())
 	}
 }
@@ -121,14 +122,14 @@ func TestHandler_SubscriptionWithError(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.Subscription)
 	req, _ := http.NewRequest(http.MethodPost, "/", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
-	if w.Code != http.StatusConflict && w.Body.String() != ErrInvSubEmail {
+	if w.Code != http.StatusConflict && w.Body.String() != handler.ErrInvSubEmail {
 		t.Errorf("TestHandler_Rate status code: %d  Body: %s", w.Code, w.Body.String())
 	}
 }
@@ -149,7 +150,7 @@ func TestHandler_SendEmails(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)
@@ -166,7 +167,7 @@ func TestHandler_SendEmails(t *testing.T) {
 	req, _ = http.NewRequest(http.MethodPost, "/", nil)
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)
-	if w.Code != http.StatusOK && w.Body.String() != EmailsSent {
+	if w.Code != http.StatusOK && w.Body.String() != handler.EmailsSent {
 		t.Errorf("TestHandler_SendEmails status code: %d  Body: %s", w.Code, w.Body.String())
 	}
 }
@@ -187,7 +188,7 @@ func TestHandler_SendEmailsWithErrorEmptyStorage(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)
@@ -195,7 +196,7 @@ func TestHandler_SendEmailsWithErrorEmptyStorage(t *testing.T) {
 	req, _ := http.NewRequest(http.MethodPost, "/", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
-	if w.Code != http.StatusConflict && strings.Contains(w.Body.String(), ErrEmailsNotSent) {
+	if w.Code != http.StatusConflict && strings.Contains(w.Body.String(), handler.ErrEmailsNotSent) {
 		t.Errorf("TestHandler_SendEmailsWithErrorEmptyStorage status code: %d  Body: %s", w.Code, w.Body.String())
 	}
 }
@@ -216,7 +217,7 @@ func TestHandler_SendEmailsWithErrorExchangeRateService(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)
@@ -233,7 +234,7 @@ func TestHandler_SendEmailsWithErrorExchangeRateService(t *testing.T) {
 	req, _ = http.NewRequest(http.MethodPost, "/", nil)
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)
-	if w.Code != http.StatusConflict && strings.Contains(w.Body.String(), ErrEmailsNotSent) {
+	if w.Code != http.StatusConflict && strings.Contains(w.Body.String(), handler.ErrEmailsNotSent) {
 		t.Errorf("TestHandler_SendEmailsWithErrorExchangeRateService status code: %d  Body: %s", w.Code, w.Body.String())
 	}
 }
@@ -254,7 +255,7 @@ func TestHandler_SendEmailsWithErrorInEmailService(t *testing.T) {
 		FromAddress: "",
 		FromName:    "",
 	})
-	h := NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)
@@ -271,7 +272,7 @@ func TestHandler_SendEmailsWithErrorInEmailService(t *testing.T) {
 	req, _ = http.NewRequest(http.MethodPost, "/", nil)
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)
-	if w.Code != http.StatusConflict && strings.Contains(w.Body.String(), ErrEmailsNotSent) {
+	if w.Code != http.StatusConflict && strings.Contains(w.Body.String(), handler.ErrEmailsNotSent) {
 		t.Errorf("TestHandler_SendEmailsWithErrorInEmailService status code: %d  Body: %s", w.Code, w.Body.String())
 	}
 }

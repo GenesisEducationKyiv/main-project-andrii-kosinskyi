@@ -29,6 +29,9 @@ func TestLocalRepository_DoNotWriteDuplicateRecord(t *testing.T) {
 	defer os.Remove("./storage.json")
 
 	err = repo.Write("taras@schevchenko.com")
+	if !errors.Is(err, ErrRecordExists) || len(repo.Records) != 1 {
+		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))
+	}
 	err = repo.Write("taras@schevchenko.com")
 	if !errors.Is(err, ErrRecordExists) || len(repo.Records) != 1 {
 		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))

@@ -1,6 +1,7 @@
-package config
+package config_test
 
 import (
+	"bitcoin_checker_api/config"
 	"errors"
 	"testing"
 )
@@ -8,29 +9,29 @@ import (
 func TestEmailService_Empty(t *testing.T) {
 	tests := []struct {
 		name string
-		cfg  *EmailService
+		cfg  *config.EmailService
 		want error
 	}{
-		{name: "Valid config", cfg: &EmailService{
+		{name: "Valid config", cfg: &config.EmailService{
 			APIKey:      "qwer-3423d-sdfasdf",
 			FromAddress: "tarsa@schecvcnko.com",
 			FromName:    "tarsa@schecvcnko.com",
 		}, want: nil},
-		{name: "Invalid config with empty APIKey", cfg: &EmailService{
+		{name: "Invalid config with empty APIKey", cfg: &config.EmailService{
 			APIKey:      "",
 			FromAddress: "tarsa@schecvcnko.com",
 			FromName:    "tarsa@schecvcnko.com",
-		}, want: ErrEmptyConfig},
-		{name: "Invalid config with empty FromAddress", cfg: &EmailService{
+		}, want: config.ErrEmptyConfig},
+		{name: "Invalid config with empty FromAddress", cfg: &config.EmailService{
 			APIKey:      "qwer-3423d-sdfasdf",
 			FromAddress: "",
 			FromName:    "tarsa@schecvcnko.com",
-		}, want: ErrEmptyConfig},
-		{name: "Invalid config with empty FromName", cfg: &EmailService{
+		}, want: config.ErrEmptyConfig},
+		{name: "Invalid config with empty FromName", cfg: &config.EmailService{
 			APIKey:      "qwer-3423d-sdfasdf",
 			FromAddress: "tarsa@schecvcnko.com",
 			FromName:    "",
-		}, want: ErrEmptyConfig},
+		}, want: config.ErrEmptyConfig},
 	}
 
 	for _, tt := range tests {
@@ -45,29 +46,29 @@ func TestEmailService_Empty(t *testing.T) {
 func TestExchangeRate_Empty(t *testing.T) {
 	tests := []struct {
 		name string
-		cfg  *ExchangeRate
+		cfg  *config.ExchangeRate
 		want error
 	}{
-		{name: "Valid config", cfg: &ExchangeRate{
+		{name: "Valid config", cfg: &config.ExchangeRate{
 			URLMask: "https://qwe.wer",
 			InRate:  "ua",
 			OutRate: "bit",
 		}, want: nil},
-		{name: "Invalid config with empty URLMask", cfg: &ExchangeRate{
+		{name: "Invalid config with empty URLMask", cfg: &config.ExchangeRate{
 			URLMask: "",
 			InRate:  "ua",
 			OutRate: "bit",
-		}, want: ErrEmptyConfig},
-		{name: "Invalid config with empty InRate", cfg: &ExchangeRate{
+		}, want: config.ErrEmptyConfig},
+		{name: "Invalid config with empty InRate", cfg: &config.ExchangeRate{
 			URLMask: "https://qwe.wer",
 			InRate:  "",
 			OutRate: "bit",
-		}, want: ErrEmptyConfig},
-		{name: "Invalid config with empty OutRate", cfg: &ExchangeRate{
+		}, want: config.ErrEmptyConfig},
+		{name: "Invalid config with empty OutRate", cfg: &config.ExchangeRate{
 			URLMask: "https://qwe.wer",
 			InRate:  "ua",
 			OutRate: "",
-		}, want: ErrEmptyConfig},
+		}, want: config.ErrEmptyConfig},
 	}
 
 	for _, tt := range tests {
