@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bitcoin_checker_api/internal/pkg/email"
+	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/repository"
 	"context"
 	"log"
@@ -60,12 +62,10 @@ func initApp(cfg *config.Config) http.Handler {
 		log.Fatal(err)
 	}
 
-	useCaseConfig := &usecase.Config{
-		ExchangeRate: &cfg.ExchangeRate,
-		EmailService: &cfg.EmailService,
-	}
+	excRate := exchangerate.NewExchangeRate(&cfg.ExchangeRate)
+	emailServ := email.NewMockService(&cfg.EmailService)
 
-	h := handler.NewHandler(cfg, usecase.NewUseCase(useCaseConfig, repo))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
 
 	router := gin.Default()
 	v1 := router.Group("/api")
