@@ -1,7 +1,7 @@
 package main
 
 import (
-	repository "bitcoin_checker_api/internal/repository/storage"
+	"bitcoin_checker_api/internal/repository"
 	"context"
 	"log"
 	"net/http"

@@ -1,12 +1,10 @@
 package usecase
 
 import (
-	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/pkg/email"
 	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/repository"
 	"context"
-	"errors"
 )
 
 type UseCase struct {
@@ -15,16 +13,11 @@ type UseCase struct {
 	emailService email.Emailer
 }
 
-type Config struct {
-	ExchangeRate *config.ExchangeRate
-	EmailService *config.EmailService
-}
-
-func NewUseCase(c *Config, r repository.Repository) *UseCase {
+func NewUseCase(r repository.Repository, er exchangerate.ExchangeRater, es email.Emailer) *UseCase {
 	return &UseCase{
 		repository:   r,
-		exchangeRate: exchangerate.NewExchangeRate(c.ExchangeRate),
-		emailService: email.NewService(c.EmailService),
+		exchangeRate: er,
+		emailService: es,
 	}
 }
 
@@ -35,7 +28,7 @@ func (that *UseCase) SubscribeEmailOnExchangeRate(e string) error {
 func (that *UseCase) SendEmailsWithExchangeRate(ctx context.Context) error {
 	users := that.repository.ReadAll()
 	if len(users) == 0 {
-		return errors.New("storage is empty")
+		return ErrUseCaseEmptyUserList
 	}
 
 	data, err := that.ExchangeRate(ctx)

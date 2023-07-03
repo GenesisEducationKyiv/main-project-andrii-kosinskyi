@@ -1,0 +1,32 @@
+package email
+
+import (
+	"bitcoin_checker_api/config"
+	"fmt"
+	"net/http"
+)
+
+type MockService struct {
+	APIKey      string
+	FromAddress string
+	FromName    string
+}
+
+func NewMockService(c *config.EmailService) *MockService {
+	return &MockService{
+		APIKey:      c.APIKey,
+		FromAddress: c.FromAddress,
+		FromName:    c.FromName,
+	}
+}
+
+func (that *MockService) Send(email, data string) error {
+	if that.APIKey == "" {
+		return fmt.Errorf("error: not send, status code: %d ", 404)
+	}
+	return nil
+}
+
+func (that *MockService) SuccessSentStatusCode(statusCode int) bool {
+	return statusCode == http.StatusOK || statusCode == http.StatusCreated || statusCode == http.StatusAccepted
+}

@@ -1,22 +1,23 @@
 package exchangerate
 
 import (
-	"bitcoin_checker_api/config"
 	"context"
 	"fmt"
 	"io"
 	"net/http"
+
+	"bitcoin_checker_api/config"
 )
 
-type ExchangeRate struct {
+type MockExchangeRate struct {
 	url string
 }
 
-func NewExchangeRate(c *config.ExchangeRate) *ExchangeRate {
-	return &ExchangeRate{url: fmt.Sprintf(c.URLMask, c.InRate, c.OutRate)}
+func NewMockExchangeRate(c *config.ExchangeRate) *MockExchangeRate {
+	return &MockExchangeRate{url: fmt.Sprintf(c.URLMask, c.InRate, c.OutRate)}
 }
 
-func (that *ExchangeRate) Get(ctx context.Context) (string, error) {
+func (that *MockExchangeRate) Get(ctx context.Context) (string, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, that.url, nil)
 	if err != nil {
 		return "", err

@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"bitcoin_checker_api/internal/repository"
 	"encoding/json"
 	"log"
 	"os"
@@ -55,7 +54,7 @@ func NewLocalRepository(cfg *config.Storage) (*LocalRepository, error) {
 
 func (that *LocalRepository) Write(email string) error {
 	if ok := that.ExistsByEmail(email); ok {
-		return repository.ErrRecordExists
+		return ErrRecordExists
 	}
 
 	that.RecordsMap[email] = struct{}{}
