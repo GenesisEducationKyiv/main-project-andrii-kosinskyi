@@ -1,10 +1,11 @@
 package usecase
 
 import (
+	"context"
+
 	"bitcoin_checker_api/internal/pkg/email"
 	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/repository"
-	"context"
 )
 
 type UseCase struct {

@@ -1,9 +1,6 @@
 package main
 
 import (
-	"bitcoin_checker_api/internal/pkg/email"
-	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
-	"bitcoin_checker_api/internal/repository"
 	"context"
 	"log"
 	"net/http"
@@ -12,6 +9,10 @@ import (
 	"strconv"
 	"syscall"
 	"time"
+
+	"bitcoin_checker_api/internal/pkg/email"
+	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
+	"bitcoin_checker_api/internal/repository"
 
 	"bitcoin_checker_api/internal/usecase"
 

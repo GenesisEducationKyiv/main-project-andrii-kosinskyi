@@ -1,11 +1,12 @@
 package handler
 
 import (
-	"bitcoin_checker_api/internal/validator"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+
+	"bitcoin_checker_api/internal/validator"
 
 	"bitcoin_checker_api/internal/usecase"
 

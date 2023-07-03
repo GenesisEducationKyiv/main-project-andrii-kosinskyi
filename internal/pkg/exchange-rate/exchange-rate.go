@@ -1,11 +1,12 @@
 package exchangerate
 
 import (
-	"bitcoin_checker_api/config"
 	"context"
 	"fmt"
 	"io"
 	"net/http"
+
+	"bitcoin_checker_api/config"
 )
 
 type ExchangeRate struct {

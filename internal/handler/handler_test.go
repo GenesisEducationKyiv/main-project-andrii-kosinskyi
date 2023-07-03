@@ -1,18 +1,19 @@
 package handler
 
 import (
-	"bitcoin_checker_api/config"
-	"bitcoin_checker_api/internal/pkg/email"
-	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
-	"bitcoin_checker_api/internal/repository"
-	"bitcoin_checker_api/internal/usecase"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
 	"testing"
+
+	"bitcoin_checker_api/config"
+	"bitcoin_checker_api/internal/pkg/email"
+	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
+	"bitcoin_checker_api/internal/repository"
+	"bitcoin_checker_api/internal/usecase"
+	"github.com/gin-gonic/gin"
 )
 
 func SetUpRouter() *gin.Engine {
@@ -42,9 +43,6 @@ func TestHandler_Rate(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
-
-	//responseData, _ := ioutil.ReadAll(w.Body)
-
 	if w.Code != http.StatusOK || len(w.Body.String()) == 0 {
 		t.Errorf("TestHandler_Rate status code: %d  Body: %s", w.Code, w.Body.String())
 	}

@@ -1,10 +1,12 @@
 package repository
 
 import (
-	"bitcoin_checker_api/config"
+	"errors"
 	"fmt"
 	"os"
 	"testing"
+
+	"bitcoin_checker_api/config"
 )
 
 func TestLocalRepository_Write(t *testing.T) {
@@ -28,7 +30,7 @@ func TestLocalRepository_DoNotWriteDuplicateRecord(t *testing.T) {
 
 	err = repo.Write("taras@schevchenko.com")
 	err = repo.Write("taras@schevchenko.com")
-	if err != ErrRecordExists || len(repo.Records) != 1 {
+	if !errors.Is(err, ErrRecordExists) || len(repo.Records) != 1 {
 		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))
 	}
 }

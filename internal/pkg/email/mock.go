@@ -1,9 +1,10 @@
 package email
 
 import (
-	"bitcoin_checker_api/config"
 	"fmt"
 	"net/http"
+
+	"bitcoin_checker_api/config"
 )
 
 type MockService struct {
@@ -21,6 +22,8 @@ func NewMockService(c *config.EmailService) *MockService {
 }
 
 func (that *MockService) Send(email, data string) error {
+	fmt.Println("Send to: ", email)
+	fmt.Println("send body: ", data)
 	if that.APIKey == "" {
 		return fmt.Errorf("error: not send, status code: %d ", 404)
 	}

@@ -1,9 +1,11 @@
 package config
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestEmailService_Empty(t *testing.T) {
-
 	tests := []struct {
 		name string
 		cfg  *EmailService
@@ -33,12 +35,11 @@ func TestEmailService_Empty(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.cfg.Empty(); err != tt.want {
+			if err := tt.cfg.Empty(); !errors.Is(err, tt.want) {
 				t.Errorf("TestEmailService_Empty() name = %s err = %v want = %v", tt.name, err, tt.want)
 			}
 		})
 	}
-
 }
 
 func TestExchangeRate_Empty(t *testing.T) {
@@ -71,7 +72,7 @@ func TestExchangeRate_Empty(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.cfg.Empty(); err != tt.want {
+			if err := tt.cfg.Empty(); !errors.Is(err, tt.want) {
 				t.Errorf("TestExchangeRate_Empty() name = %s err = %v want = %v", tt.name, err, tt.want)
 			}
 		})

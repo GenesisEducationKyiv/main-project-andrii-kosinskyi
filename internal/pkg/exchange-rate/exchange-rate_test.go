@@ -1,9 +1,10 @@
 package exchangerate
 
 import (
-	"bitcoin_checker_api/config"
 	"context"
 	"testing"
+
+	"bitcoin_checker_api/config"
 )
 
 func TestExchangeRate_Get(t *testing.T) {

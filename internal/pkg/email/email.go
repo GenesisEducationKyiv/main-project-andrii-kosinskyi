@@ -1,9 +1,10 @@
 package email
 
 import (
-	"bitcoin_checker_api/config"
 	"fmt"
 	"net/http"
+
+	"bitcoin_checker_api/config"
 
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 

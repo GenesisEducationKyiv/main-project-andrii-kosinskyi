@@ -1,12 +1,13 @@
 package usecase
 
 import (
+	"context"
+	"testing"
+
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/pkg/email"
 	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/repository"
-	"context"
-	"testing"
 )
 
 func TestUseCase_ExchangeRate(t *testing.T) {

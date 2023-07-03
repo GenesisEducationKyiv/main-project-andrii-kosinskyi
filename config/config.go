@@ -100,8 +100,5 @@ func (that *Config) validConfig() error {
 	}
 
 	rawURL := fmt.Sprintf(that.ExchangeRate.URLMask, that.ExchangeRate.InRate, that.ExchangeRate.OutRate)
-	if err := validator.ValidURL(rawURL); err != nil {
-		return err
-	}
-	return nil
+	return validator.ValidURL(rawURL)
 }
