@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"bitcoin_checker_api/config"
@@ -68,7 +69,7 @@ func TestUseCase_SubscribeEmailOnExchangeRateWithDuplicateEmailError(t *testing.
 		t.Errorf("TestUseCase_SubscribeEmailOnExchangeRateWithDuplicateEmailError() r.Write() err = %v", err)
 	}
 
-	if err = useCase.SubscribeEmailOnExchangeRate("taras@shchevchenko.com"); err != repository.ErrRecordExists {
+	if err = useCase.SubscribeEmailOnExchangeRate("taras@shchevchenko.com"); !errors.Is(err, repository.ErrRecordExists) {
 		t.Errorf("TestUseCase_SubscribeEmailOnExchangeRateWithDuplicateEmailError() err = %v", err)
 	}
 }
@@ -107,7 +108,7 @@ func TestUseCase_SendEmailsWithExchangeRateWithErrorEmptyRepository(t *testing.T
 	es := email.NewMockService(&config.EmailService{APIKey: "", FromAddress: "", FromName: ""})
 	useCase := NewUseCase(r, ex, es)
 
-	if err := useCase.SendEmailsWithExchangeRate(ctx); err != ErrUseCaseEmptyUserList {
+	if err := useCase.SendEmailsWithExchangeRate(ctx); !errors.Is(err, ErrUseCaseEmptyUserList) {
 		t.Errorf("TestUseCase_SendEmailsWithExchangeRate() err = %v", err)
 	}
 }

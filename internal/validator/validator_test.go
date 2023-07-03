@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -34,7 +35,7 @@ func TestValidMailAddress(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := ValidMailAddress(tt.email); err != tt.wantErr {
+			if err := ValidMailAddress(tt.email); !errors.Is(err, tt.wantErr) {
 				t.Errorf("ValidMailAddress() name = %s got = %#v wantErr =  %#v", tt.name, err, tt.wantErr)
 			}
 		})
@@ -54,7 +55,7 @@ func TestValidURLWithError(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := ValidURL(tt.rawURL); err != tt.wantErr {
+			if err := ValidURL(tt.rawURL); !errors.Is(err, tt.wantErr) {
 				t.Errorf("ValidMailAddress() name = %s got = %v wantErr =  %v", tt.name, err, tt.wantErr)
 			}
 		})
