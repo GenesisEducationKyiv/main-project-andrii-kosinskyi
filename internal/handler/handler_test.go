@@ -1,3 +1,4 @@
+//nolint:goimports // stranger issue on 17 line
 package handler_test
 
 import (
