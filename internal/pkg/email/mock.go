@@ -22,7 +22,6 @@ func NewMockService(c *config.EmailService) *MockService {
 }
 
 func (that *MockService) Send(_, _ string) error {
-
 	if that.APIKey == "" {
 		return fmt.Errorf("error: not send, status code: %d ", http.StatusBadRequest)
 	}

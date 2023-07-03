@@ -1,9 +1,10 @@
 package config_test
 
 import (
-	"bitcoin_checker_api/config"
 	"errors"
 	"testing"
+
+	"bitcoin_checker_api/config"
 )
 
 func TestEmailService_Empty(t *testing.T) {

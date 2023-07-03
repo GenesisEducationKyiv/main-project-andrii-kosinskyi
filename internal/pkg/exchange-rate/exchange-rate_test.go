@@ -1,9 +1,10 @@
 package exchangerate_test
 
 import (
-	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"context"
 	"testing"
+
+	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 
 	"bitcoin_checker_api/config"
 )

@@ -1,9 +1,11 @@
-package usecase
+package usecase_test
 
 import (
 	"context"
 	"errors"
 	"testing"
+
+	"bitcoin_checker_api/internal/usecase"
 
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/pkg/email"
@@ -22,7 +24,7 @@ func TestUseCase_ExchangeRate(t *testing.T) {
 	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{})
 
-	useCase := NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, es)
 	_, err := useCase.ExchangeRate(ctx)
 	if err != nil {
 		t.Errorf("TestUseCase_ExchangeRate() err = %v", err)
@@ -40,7 +42,7 @@ func TestUseCase_ExchangeRateWithError(t *testing.T) {
 	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{})
 
-	useCase := NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, es)
 	_, err := useCase.ExchangeRate(ctx)
 	if err == nil {
 		t.Errorf("TestUseCase_ExchangeRateWithError() err = %v", err)
@@ -51,7 +53,7 @@ func TestUseCase_SubscribeEmailOnExchangeRate(t *testing.T) {
 	r, _ := repository.NewMockRepository(&config.Storage{Path: "./storage.json"})
 	ex := exchangerate.NewExchangeRate(&config.ExchangeRate{})
 	es := email.NewMockService(&config.EmailService{})
-	useCase := NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, es)
 
 	if err := useCase.SubscribeEmailOnExchangeRate("taras@shchevchenko.com"); err != nil {
 		t.Errorf("TestUseCase_SubscribeEmailOnExchangeRate() err = %v", err)
@@ -62,7 +64,7 @@ func TestUseCase_SubscribeEmailOnExchangeRateWithDuplicateEmailError(t *testing.
 	r, _ := repository.NewMockRepository(&config.Storage{})
 	ex := exchangerate.NewExchangeRate(&config.ExchangeRate{})
 	es := email.NewMockService(&config.EmailService{})
-	useCase := NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, es)
 
 	err := r.Write("taras@shchevchenko.com")
 	if err != nil {
@@ -84,7 +86,7 @@ func TestUseCase_SendEmailsWithExchangeRate(t *testing.T) {
 	}
 	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{APIKey: "test", FromAddress: "test", FromName: "test"})
-	useCase := NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, es)
 
 	err := r.Write("taras@shchevchenko.com")
 	if err != nil {
@@ -106,9 +108,9 @@ func TestUseCase_SendEmailsWithExchangeRateWithErrorEmptyRepository(t *testing.T
 	}
 	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{APIKey: "", FromAddress: "", FromName: ""})
-	useCase := NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, es)
 
-	if err := useCase.SendEmailsWithExchangeRate(ctx); !errors.Is(err, ErrUseCaseEmptyUserList) {
+	if err := useCase.SendEmailsWithExchangeRate(ctx); !errors.Is(err, usecase.ErrUseCaseEmptyUserList) {
 		t.Errorf("TestUseCase_SendEmailsWithExchangeRate() err = %v", err)
 	}
 }
@@ -123,7 +125,7 @@ func TestUseCase_SendEmailsWithExchangeRateWithErrorInRequestToExchangeRate(t *t
 	}
 	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{APIKey: "", FromAddress: "", FromName: ""})
-	useCase := NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, es)
 
 	err := r.Write("taras@shchevchenko.com")
 	if err != nil {
@@ -145,7 +147,7 @@ func TestUseCase_SendEmailsWithExchangeRateWithErrorSendEmail(t *testing.T) {
 	}
 	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{APIKey: "", FromAddress: "", FromName: ""})
-	useCase := NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, es)
 
 	err := r.Write("taras@shchevchenko.com")
 	if err != nil {

@@ -1,4 +1,4 @@
-package repository
+package repository_test
 
 import (
 	"errors"
@@ -6,11 +6,13 @@ import (
 	"os"
 	"testing"
 
+	"bitcoin_checker_api/internal/repository"
+
 	"bitcoin_checker_api/config"
 )
 
 func TestLocalRepository_Write(t *testing.T) {
-	repo, err := NewLocalRepository(&config.Storage{Path: "./storage.json"})
+	repo, err := repository.NewLocalRepository(&config.Storage{Path: "./storage.json"})
 	if err != nil {
 		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))
 	}
@@ -22,25 +24,25 @@ func TestLocalRepository_Write(t *testing.T) {
 }
 
 func TestLocalRepository_DoNotWriteDuplicateRecord(t *testing.T) {
-	repo, err := NewLocalRepository(&config.Storage{Path: "./storage.json"})
+	repo, err := repository.NewLocalRepository(&config.Storage{Path: "./storage.json"})
 	if err != nil {
 		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))
 	}
 	defer os.Remove("./storage.json")
 
 	err = repo.Write("taras@schevchenko.com")
-	if !errors.Is(err, ErrRecordExists) || len(repo.Records) != 1 {
+	if err != nil {
 		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))
 	}
 	err = repo.Write("taras@schevchenko.com")
-	if !errors.Is(err, ErrRecordExists) || len(repo.Records) != 1 {
+	if !errors.Is(err, repository.ErrRecordExists) || len(repo.Records) != 1 {
 		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))
 	}
 }
 
 func TestLocalRepository_ReadAll(t *testing.T) {
 	numRecords := 7
-	repo, err := NewLocalRepository(&config.Storage{Path: "./storage.json"})
+	repo, err := repository.NewLocalRepository(&config.Storage{Path: "./storage.json"})
 	if err != nil {
 		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))
 	}

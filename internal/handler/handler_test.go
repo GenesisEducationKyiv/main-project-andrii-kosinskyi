@@ -1,13 +1,14 @@
 package handler_test
 
 import (
-	"bitcoin_checker_api/internal/handler"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
 	"testing"
+
+	"bitcoin_checker_api/internal/handler"
 
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/pkg/email"
@@ -41,7 +42,7 @@ func TestHandler_Rate(t *testing.T) {
 
 	r := SetUpRouter()
 	r.GET("/", h.Rate)
-	req, _ := http.NewRequest("GET", "/", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusOK || len(w.Body.String()) == 0 {
@@ -68,7 +69,7 @@ func TestHandler_RateWithError(t *testing.T) {
 
 	r := SetUpRouter()
 	r.GET("/", h.Rate)
-	req, _ := http.NewRequest("GET", "/", nil)
+	req, _ := http.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	if w.Code != http.StatusBadRequest || !strings.Contains(w.Body.String(), handler.ErrInvStatVal) {

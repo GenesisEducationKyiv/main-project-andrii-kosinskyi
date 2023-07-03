@@ -1,8 +1,9 @@
 package model_test
 
 import (
-	"bitcoin_checker_api/internal/model"
 	"testing"
+
+	"bitcoin_checker_api/internal/model"
 )
 
 func TestNewUser(t *testing.T) {
