@@ -2,7 +2,9 @@ name: golangci-lint
 on:
   push:
     branches:
+      - main
       - homework_1
+      - homework_2_tests
   pull_request:
 
 permissions:
@@ -52,3 +54,19 @@ jobs:
 
           # Optional:The mode to install golangci-lint. It can be 'binary' or 'goinstall'.
           # install-mode: "goinstall"
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+      - name: Install dependencies
+        run: go get .
+      - name: Build
+        run: go build -v ./...
+      - name: Test
+        run: go test -v ./...
