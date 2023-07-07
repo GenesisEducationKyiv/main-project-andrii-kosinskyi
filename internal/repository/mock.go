@@ -36,6 +36,10 @@ func (that *MockRepository) ReadAll() []*model.User {
 	return that.Records
 }
 
+func (that *MockRepository) RemoveAll() error {
+	return nil
+}
+
 func (that *MockRepository) ExistsByEmail(e string) bool {
 	_, ok := that.RecordsMap[e]
 	return ok

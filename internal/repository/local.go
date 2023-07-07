@@ -76,6 +76,14 @@ func (that *LocalRepository) ReadAll() []*model.User {
 	return that.Records
 }
 
+func (that *LocalRepository) RemoveAll() error {
+	err := os.Remove(that.Cfg.Path)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (that *LocalRepository) ExistsByEmail(e string) bool {
 	_, ok := that.RecordsMap[e]
 	return ok
