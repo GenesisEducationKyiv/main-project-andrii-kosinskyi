@@ -15,8 +15,7 @@ func TestLocalRepository_Write(t *testing.T) {
 	if err != nil {
 		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))
 	}
-	//nolint:errcheck
-	defer repo.RemoveAll()
+	defer repo.RemoveAll() //nolint:errcheck // in test this checking is redundant
 
 	if err = repo.Write("taras@schevchenko.com"); err != nil || len(repo.Records) == 0 {
 		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))
@@ -28,7 +27,7 @@ func TestLocalRepository_DoNotWriteDuplicateRecord(t *testing.T) {
 	if err != nil {
 		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))
 	}
-	defer repo.RemoveAll() //nolint:errcheck
+	defer repo.RemoveAll() //nolint:errcheck // in test this checking is redundant
 
 	err = repo.Write("taras@schevchenko.com")
 	if err != nil {
@@ -46,7 +45,7 @@ func TestLocalRepository_ReadAll(t *testing.T) {
 	if err != nil {
 		t.Errorf("TestRepository_Write() err = %v record len = %d", err, len(repo.Records))
 	}
-	defer repo.RemoveAll() //nolint:errcheck
+	defer repo.RemoveAll() //nolint:errcheck // in test this checking is redundant
 
 	for i := 0; i < numRecords; i++ {
 		err = repo.Write(fmt.Sprintf("taras@schevchenko%d.com", i))
