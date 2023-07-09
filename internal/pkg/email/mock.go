@@ -23,7 +23,7 @@ func NewMockService(c *config.EmailService) *MockService {
 	}
 }
 
-func (that *MockService) Send(email string, er *model.ExchangeRate) error {
+func (that *MockService) Send(_ string, _ *model.ExchangeRate) error {
 	if that.APIKey == "" {
 		return fmt.Errorf("error: not send, status code: %d ", http.StatusBadRequest)
 	}

@@ -19,7 +19,12 @@ func TestNewExchangeRate(t *testing.T) {
 		price float64
 		want  want
 	}{
-		{name: "Valid exchange rate model creation", base: "Bitcoin", quote: "Ukrainian Hryvnia", price: 20000.0202, want: want{base: "Bitcoin", quote: "Ukrainian Hryvnia", price: 20000.0202}},
+		{
+			name:  "Valid exchange rate model creation",
+			base:  "Bitcoin",
+			quote: "Ukrainian Hryvnia",
+			price: 20000.0202,
+			want:  want{base: "Bitcoin", quote: "Ukrainian Hryvnia", price: 20000.0202}},
 	}
 
 	for _, tt := range tests {

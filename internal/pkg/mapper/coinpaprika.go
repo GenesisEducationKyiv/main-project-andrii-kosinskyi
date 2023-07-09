@@ -12,10 +12,10 @@ type CoinPaprikaMapper struct {
 }
 
 type CoinPaprikaRespBody struct {
-	BaseCurrencyId        string    `json:"base_currency_id"`
+	BaseCurrencyID        string    `json:"base_currency_id"`
 	BaseCurrencyName      string    `json:"base_currency_name"`
 	BasePriceLastUpdated  time.Time `json:"base_price_last_updated"`
-	QuoteCurrencyId       string    `json:"quote_currency_id"`
+	QuoteCurrencyID       string    `json:"quote_currency_id"`
 	QuoteCurrencyName     string    `json:"quote_currency_name"`
 	QuotePriceLastUpdated time.Time `json:"quote_price_last_updated"`
 	Amount                int       `json:"amount"`

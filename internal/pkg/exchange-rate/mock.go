@@ -16,7 +16,7 @@ func NewMockExchangeRate(c *config.ExchangeRate) *MockExchangeRate {
 	return &MockExchangeRate{url: fmt.Sprintf("%s%s%s", c.URLMask, c.InRate, c.OutRate)}
 }
 
-func (that *MockExchangeRate) Get(ctx context.Context) ([]byte, error) {
+func (that *MockExchangeRate) Get(_ context.Context) ([]byte, error) {
 	if that.url == "" {
 		return make([]byte, 0), fmt.Errorf("ExchageRate.Get() Response: %s status code: %d", "", http.StatusNotFound)
 	}

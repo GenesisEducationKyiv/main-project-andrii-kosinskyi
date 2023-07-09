@@ -1,6 +1,10 @@
-package mapper
+package mapper_test
 
-import "testing"
+import (
+	"bitcoin_checker_api/internal/pkg/mapper"
+	"errors"
+	"testing"
+)
 
 func TestNewExchangeRateMapper(t *testing.T) {
 	tests := []struct {
@@ -8,11 +12,11 @@ func TestNewExchangeRateMapper(t *testing.T) {
 		serviceName string
 		want        string
 	}{
-		{name: "Create CoinPaprika mapper", serviceName: CoinPaprikaService, want: CoinPaprikaService},
+		{name: "Create CoinPaprika mapper", serviceName: mapper.CoinPaprikaService, want: mapper.CoinPaprikaService},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if service, err := NewExchangeRateMapper(tt.serviceName); err != nil && service.Name() != tt.want {
+			if service, err := mapper.NewExchangeRateMapper(tt.serviceName); err != nil && service.Name() != tt.want {
 				t.Errorf("")
 			}
 		})
@@ -20,7 +24,7 @@ func TestNewExchangeRateMapper(t *testing.T) {
 }
 
 func TestNewExchangeRateMapperWithError(t *testing.T) {
-	if _, err := NewExchangeRateMapper("Unknown service name"); err != ErrUnknownService {
-		t.Errorf("TestNewExchangeRateMapperWithError() want: %v got: %v", ErrUnknownService, err)
+	if _, err := mapper.NewExchangeRateMapper("Unknown service name"); !errors.Is(err, mapper.ErrUnknownService) {
+		t.Errorf("TestNewExchangeRateMapperWithError() want: %v got: %v", mapper.ErrUnknownService, err)
 	}
 }
