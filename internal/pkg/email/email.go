@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"bitcoin_checker_api/internal/model"
+
 	"bitcoin_checker_api/config"
 
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
@@ -25,12 +27,14 @@ func NewService(c *config.EmailService) *Service {
 	}
 }
 
-func (that *Service) Send(email, data string) error {
+const htmlTemplate = "Actual exchange rate %s to %s equal %f, this information actual on %s"
+
+func (that *Service) Send(email string, er *model.ExchangeRate) error {
 	from := mail.NewEmail(that.FromName, that.FromAddress)
 	subject := "Current exchange rate by your subscription"
 	to := mail.NewEmail("Dear customer", email)
 	plainTextContent := "Current exchange rate"
-	htmlContent := data
+	htmlContent := fmt.Sprintf(htmlTemplate, er.BaseCurrency, er.QuoteCurrency, er.Price, er.Date)
 	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
 	client := sendgrid.NewSendClient(that.APIKey)
 	response, err := client.Send(message)

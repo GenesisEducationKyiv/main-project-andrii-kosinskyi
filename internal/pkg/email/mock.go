@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"bitcoin_checker_api/internal/model"
+
 	"bitcoin_checker_api/config"
 )
 
@@ -21,7 +23,7 @@ func NewMockService(c *config.EmailService) *MockService {
 	}
 }
 
-func (that *MockService) Send(_, _ string) error {
+func (that *MockService) Send(email string, er *model.ExchangeRate) error {
 	if that.APIKey == "" {
 		return fmt.Errorf("error: not send, status code: %d ", http.StatusBadRequest)
 	}

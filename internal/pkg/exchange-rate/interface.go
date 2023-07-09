@@ -3,5 +3,5 @@ package exchangerate
 import "context"
 
 type ExchangeRater interface {
-	Get(ctx context.Context) (string, error)
+	Get(ctx context.Context) ([]byte, error)
 }

@@ -11,6 +11,8 @@ import (
 	"syscall"
 	"time"
 
+	"bitcoin_checker_api/internal/pkg/mapper"
+
 	"bitcoin_checker_api/internal/pkg/email"
 	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/repository"
@@ -25,12 +27,16 @@ import (
 func main() {
 	cfg := config.NewConfig()
 	if err := cfg.Load(); err != nil {
-		log.Fatal(err)
+		log.Fatalf("cfg.Load: %s\n", err)
 	}
 
+	h, err := initApp(cfg)
+	if err != nil {
+		log.Fatalf("initApp: %s\n", err)
+	}
 	srv := &http.Server{
 		Addr:    ":" + strconv.FormatInt(cfg.Server.Port, 10),
-		Handler: initApp(cfg),
+		Handler: h,
 	}
 
 	go func() {
@@ -57,16 +63,20 @@ func main() {
 	log.Println("Server exiting")
 }
 
-func initApp(cfg *config.Config) http.Handler {
+func initApp(cfg *config.Config) (http.Handler, error) {
 	repo, err := repository.NewLocalRepository(&cfg.Storage)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	excRate := exchangerate.NewExchangeRate(&cfg.ExchangeRate)
-	emailServ := email.NewMockService(&cfg.EmailService)
+	excRateMapper, _ := mapper.NewExchangeRateMapper(mapper.CoinPaprikaService)
+	if err != nil {
+		return nil, err
+	}
+	emailServ := email.NewService(&cfg.EmailService)
 
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, excRateMapper, emailServ))
 
 	router := gin.Default()
 	v1 := router.Group("/api")
@@ -76,5 +86,5 @@ func initApp(cfg *config.Config) http.Handler {
 		v1.POST("/sendEmails", h.SendEmails)
 	}
 
-	return router
+	return router, nil
 }

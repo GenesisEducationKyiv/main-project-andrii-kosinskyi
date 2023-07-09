@@ -5,6 +5,8 @@ import (
 	"errors"
 	"testing"
 
+	"bitcoin_checker_api/internal/pkg/mapper"
+
 	"bitcoin_checker_api/internal/usecase"
 
 	"bitcoin_checker_api/config"
@@ -16,16 +18,19 @@ import (
 func TestUseCase_ExchangeRate(t *testing.T) {
 	ctx := context.Background()
 	r, _ := repository.NewMockRepository(&config.Storage{})
-	cfg := &config.ExchangeRate{
-		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
-		InRate:  "btc-bitcoin",
-		OutRate: "uah-ukrainian-hryvnia",
+	ex := exchangerate.NewMockExchangeRate(&config.ExchangeRate{
+		URLMask: "mock",
+		InRate:  "mock",
+		OutRate: "mock",
+	})
+	m, err := mapper.NewMockExchangeRateMapper("mock")
+	if err != nil {
+		t.Errorf("TestUseCase_ExchangeRate() err = %v", err)
 	}
-	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{})
 
-	useCase := usecase.NewUseCase(r, ex, es)
-	_, err := useCase.ExchangeRate(ctx)
+	useCase := usecase.NewUseCase(r, ex, m, es)
+	_, err = useCase.ExchangeRate(ctx)
 	if err != nil {
 		t.Errorf("TestUseCase_ExchangeRate() err = %v", err)
 	}
@@ -34,16 +39,15 @@ func TestUseCase_ExchangeRate(t *testing.T) {
 func TestUseCase_ExchangeRateWithError(t *testing.T) {
 	ctx := context.Background()
 	r, _ := repository.NewMockRepository(&config.Storage{})
-	cfg := &config.ExchangeRate{
-		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
-		InRate:  "",
-		OutRate: "uah-ukrainian-hryvnia",
+	ex := exchangerate.NewMockExchangeRate(&config.ExchangeRate{})
+	m, err := mapper.NewMockExchangeRateMapper("mock")
+	if err != nil {
+		t.Errorf("TestUseCase_ExchangeRate() err = %v", err)
 	}
-	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{})
 
-	useCase := usecase.NewUseCase(r, ex, es)
-	_, err := useCase.ExchangeRate(ctx)
+	useCase := usecase.NewUseCase(r, ex, m, es)
+	_, err = useCase.ExchangeRate(ctx)
 	if err == nil {
 		t.Errorf("TestUseCase_ExchangeRateWithError() err = %v", err)
 	}
@@ -51,22 +55,30 @@ func TestUseCase_ExchangeRateWithError(t *testing.T) {
 
 func TestUseCase_SubscribeEmailOnExchangeRate(t *testing.T) {
 	r, _ := repository.NewMockRepository(&config.Storage{Path: "./storage.json"})
-	ex := exchangerate.NewExchangeRate(&config.ExchangeRate{})
+	ex := exchangerate.NewMockExchangeRate(&config.ExchangeRate{})
+	m, err := mapper.NewMockExchangeRateMapper("mock")
+	if err != nil {
+		t.Errorf("TestUseCase_ExchangeRate() err = %v", err)
+	}
 	es := email.NewMockService(&config.EmailService{})
-	useCase := usecase.NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, m, es)
 
-	if err := useCase.SubscribeEmailOnExchangeRate("taras@shchevchenko.com"); err != nil {
+	if err = useCase.SubscribeEmailOnExchangeRate("taras@shchevchenko.com"); err != nil {
 		t.Errorf("TestUseCase_SubscribeEmailOnExchangeRate() err = %v", err)
 	}
 }
 
 func TestUseCase_SubscribeEmailOnExchangeRateWithDuplicateEmailError(t *testing.T) {
 	r, _ := repository.NewMockRepository(&config.Storage{})
-	ex := exchangerate.NewExchangeRate(&config.ExchangeRate{})
+	ex := exchangerate.NewMockExchangeRate(&config.ExchangeRate{})
+	m, err := mapper.NewMockExchangeRateMapper("mock")
+	if err != nil {
+		t.Errorf("TestUseCase_ExchangeRate() err = %v", err)
+	}
 	es := email.NewMockService(&config.EmailService{})
-	useCase := usecase.NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, m, es)
 
-	err := r.Write("taras@shchevchenko.com")
+	err = r.Write("taras@shchevchenko.com")
 	if err != nil {
 		t.Errorf("TestUseCase_SubscribeEmailOnExchangeRateWithDuplicateEmailError() r.Write() err = %v", err)
 	}
@@ -79,16 +91,19 @@ func TestUseCase_SubscribeEmailOnExchangeRateWithDuplicateEmailError(t *testing.
 func TestUseCase_SendEmailsWithExchangeRate(t *testing.T) {
 	ctx := context.Background()
 	r, _ := repository.NewMockRepository(&config.Storage{})
-	cfg := &config.ExchangeRate{
-		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
-		InRate:  "btc-bitcoin",
-		OutRate: "uah-ukrainian-hryvnia",
+	ex := exchangerate.NewMockExchangeRate(&config.ExchangeRate{
+		URLMask: "mock",
+		InRate:  "mock",
+		OutRate: "mock",
+	})
+	m, err := mapper.NewMockExchangeRateMapper("mock")
+	if err != nil {
+		t.Errorf("TestUseCase_ExchangeRate() err = %v", err)
 	}
-	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{APIKey: "test", FromAddress: "test", FromName: "test"})
-	useCase := usecase.NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, m, es)
 
-	err := r.Write("taras@shchevchenko.com")
+	err = r.Write("taras@shchevchenko.com")
 	if err != nil {
 		t.Errorf("TestUseCase_SendEmailsWithExchangeRate() r.Write() err = %v", err)
 	}
@@ -101,16 +116,15 @@ func TestUseCase_SendEmailsWithExchangeRate(t *testing.T) {
 func TestUseCase_SendEmailsWithExchangeRateWithErrorEmptyRepository(t *testing.T) {
 	ctx := context.Background()
 	r, _ := repository.NewMockRepository(&config.Storage{})
-	cfg := &config.ExchangeRate{
-		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
-		InRate:  "btc-bitcoin",
-		OutRate: "uah-ukrainian-hryvnia",
+	ex := exchangerate.NewMockExchangeRate(&config.ExchangeRate{})
+	m, err := mapper.NewMockExchangeRateMapper("mock")
+	if err != nil {
+		t.Errorf("TestUseCase_ExchangeRate() err = %v", err)
 	}
-	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{APIKey: "", FromAddress: "", FromName: ""})
-	useCase := usecase.NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, m, es)
 
-	if err := useCase.SendEmailsWithExchangeRate(ctx); !errors.Is(err, usecase.ErrUseCaseEmptyUserList) {
+	if err = useCase.SendEmailsWithExchangeRate(ctx); !errors.Is(err, usecase.ErrUseCaseEmptyUserList) {
 		t.Errorf("TestUseCase_SendEmailsWithExchangeRate() err = %v", err)
 	}
 }
@@ -118,16 +132,15 @@ func TestUseCase_SendEmailsWithExchangeRateWithErrorEmptyRepository(t *testing.T
 func TestUseCase_SendEmailsWithExchangeRateWithErrorInRequestToExchangeRate(t *testing.T) {
 	ctx := context.Background()
 	r, _ := repository.NewMockRepository(&config.Storage{})
-	cfg := &config.ExchangeRate{
-		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
-		InRate:  "",
-		OutRate: "uah-ukrainian-hryvnia",
+	ex := exchangerate.NewMockExchangeRate(&config.ExchangeRate{})
+	m, err := mapper.NewMockExchangeRateMapper("mock")
+	if err != nil {
+		t.Errorf("TestUseCase_ExchangeRate() err = %v", err)
 	}
-	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{APIKey: "", FromAddress: "", FromName: ""})
-	useCase := usecase.NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, m, es)
 
-	err := r.Write("taras@shchevchenko.com")
+	err = r.Write("taras@shchevchenko.com")
 	if err != nil {
 		t.Errorf("TestUseCase_SendEmailsWithExchangeRate() r.Write() err = %v", err)
 	}
@@ -140,16 +153,15 @@ func TestUseCase_SendEmailsWithExchangeRateWithErrorInRequestToExchangeRate(t *t
 func TestUseCase_SendEmailsWithExchangeRateWithErrorSendEmail(t *testing.T) {
 	ctx := context.Background()
 	r, _ := repository.NewMockRepository(&config.Storage{})
-	cfg := &config.ExchangeRate{
-		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
-		InRate:  "btc-bitcoin",
-		OutRate: "uah-ukrainian-hryvnia",
+	ex := exchangerate.NewMockExchangeRate(&config.ExchangeRate{})
+	m, err := mapper.NewMockExchangeRateMapper("mock")
+	if err != nil {
+		t.Errorf("TestUseCase_ExchangeRate() err = %v", err)
 	}
-	ex := exchangerate.NewExchangeRate(cfg)
 	es := email.NewMockService(&config.EmailService{APIKey: "", FromAddress: "", FromName: ""})
-	useCase := usecase.NewUseCase(r, ex, es)
+	useCase := usecase.NewUseCase(r, ex, m, es)
 
-	err := r.Write("taras@shchevchenko.com")
+	err = r.Write("taras@shchevchenko.com")
 	if err != nil {
 		t.Errorf("TestUseCase_SendEmailsWithExchangeRate() r.Write() err = %v", err)
 	}

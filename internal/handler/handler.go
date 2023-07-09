@@ -35,7 +35,7 @@ func (that *Handler) Rate(c *gin.Context) {
 		c.IndentedJSON(http.StatusBadRequest, ErrInvStatVal)
 		return
 	}
-	log.Printf("endpoint: %s response: %s", handlerEndpoint(c), exchangeRate)
+	log.Printf("endpoint: %s response: %v", handlerEndpoint(c), exchangeRate)
 	c.IndentedJSON(http.StatusOK, exchangeRate)
 }
 
