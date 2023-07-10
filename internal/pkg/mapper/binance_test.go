@@ -14,7 +14,6 @@ func TestBinanceMapper_Name(t *testing.T) {
 }
 
 func TestBinanceMapper_Map(t *testing.T) {
-	//nolint:lll
 	validRespBody := []byte("{\n\"symbol\": \"BTCUAH\",\n\"price\": \"1162870.00000000\"\n}")
 	if _, err := mapper.NewBinanceMapper().Map(validRespBody); err != nil {
 		t.Errorf("TestBinanceMapper_Map(): err: %v", err)

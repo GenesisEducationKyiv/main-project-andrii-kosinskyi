@@ -20,7 +20,7 @@ func TestExchangeRate_Get_Coinpaprika(t *testing.T) {
 
 	_, err := client.Get(ctx)
 	if err != nil {
-		t.Errorf("TestExchangeRate_Get() err = %v", err)
+		t.Errorf("TestExchangeRate_Get_Coinpaprika() err = %v", err)
 	}
 }
 
@@ -35,7 +35,7 @@ func TestExchangeRate_Get_Binance(t *testing.T) {
 
 	_, err := client.Get(ctx)
 	if err != nil {
-		t.Errorf("TestExchangeRate_Get() err = %v", err)
+		t.Errorf("TestExchangeRate_Get_Binance() err = %v", err)
 	}
 }
 
