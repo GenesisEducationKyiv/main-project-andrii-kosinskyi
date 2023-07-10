@@ -12,7 +12,7 @@ out_rate_name = "uah-ukrainian-hryvnia"
 
 [exchangerate.binance]
 service_name = "binance"
-url_mask = "https://api.binance.com/api/v3/ticker/price?symbol=%s%s"
+url_mask = "https://data.binance.com/api/v3/ticker/price?symbol=%s%s"
 in_rate_name = "BTC"
 out_rate_name = "UAH"
 
