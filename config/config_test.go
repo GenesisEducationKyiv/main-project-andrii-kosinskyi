@@ -51,30 +51,66 @@ func TestExchangeRate_Empty(t *testing.T) {
 		want error
 	}{
 		{name: "Valid config", cfg: &config.ExchangeRate{
-			URLMask: "https://qwe.wer",
-			InRate:  "ua",
-			OutRate: "bit",
+			Binance: &config.DefaultExchangeRate{
+				ServiceName: "bitcoin",
+				URLMask:     "https://qwe.wer",
+				InRate:      "ua",
+				OutRate:     "bit",
+			},
+			Coinpaprika: &config.DefaultExchangeRate{
+				ServiceName: "coinpaprika",
+				URLMask:     "https://qwe.wer",
+				InRate:      "ua",
+				OutRate:     "bit",
+			},
 		}, want: nil},
 		{name: "Invalid config with empty URLMask", cfg: &config.ExchangeRate{
-			URLMask: "",
-			InRate:  "ua",
-			OutRate: "bit",
+			Binance: &config.DefaultExchangeRate{
+				ServiceName: "bitcoin",
+				URLMask:     "",
+				InRate:      "er",
+				OutRate:     "bit",
+			},
+			Coinpaprika: &config.DefaultExchangeRate{
+				ServiceName: "bitcoin",
+				URLMask:     "https://qwe.wer",
+				InRate:      "ua",
+				OutRate:     "bit",
+			},
 		}, want: config.ErrEmptyConfig},
 		{name: "Invalid config with empty InRate", cfg: &config.ExchangeRate{
-			URLMask: "https://qwe.wer",
-			InRate:  "",
-			OutRate: "bit",
+			Binance: &config.DefaultExchangeRate{
+				ServiceName: "bitcoin",
+				URLMask:     "https://qwe.wer",
+				InRate:      "",
+				OutRate:     "bit",
+			},
+			Coinpaprika: &config.DefaultExchangeRate{
+				ServiceName: "bitcoin",
+				URLMask:     "https://qwe.wer",
+				InRate:      "dfg",
+				OutRate:     "bit",
+			},
 		}, want: config.ErrEmptyConfig},
 		{name: "Invalid config with empty OutRate", cfg: &config.ExchangeRate{
-			URLMask: "https://qwe.wer",
-			InRate:  "ua",
-			OutRate: "",
+			Binance: &config.DefaultExchangeRate{
+				ServiceName: "bitcoin",
+				URLMask:     "https://qwe.wer",
+				InRate:      "ua",
+				OutRate:     "",
+			},
+			Coinpaprika: &config.DefaultExchangeRate{
+				ServiceName: "bitcoin",
+				URLMask:     "https://qwe.wer",
+				InRate:      "ua",
+				OutRate:     "df",
+			},
 		}, want: config.ErrEmptyConfig},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.cfg.Empty(); !errors.Is(err, tt.want) {
+			if err := tt.cfg.Binance.Empty(); !errors.Is(err, tt.want) {
 				t.Errorf("TestExchangeRate_Empty() name = %s err = %v want = %v", tt.name, err, tt.want)
 			}
 		})

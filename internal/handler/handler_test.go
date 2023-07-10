@@ -9,8 +9,6 @@ import (
 	"strings"
 	"testing"
 
-	"bitcoin_checker_api/internal/pkg/mapper"
-
 	"bitcoin_checker_api/internal/handler"
 
 	"bitcoin_checker_api/config"
@@ -31,21 +29,29 @@ func TestHandler_Rate(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	excRate := exchangerate.NewMockExchangeRate(&config.ExchangeRate{
+	excRateCoinpaprika, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
 		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
 		InRate:  "btc-bitcoin",
 		OutRate: "uah-ukrainian-hryvnia",
 	})
-	rateMapper, err := mapper.NewMockExchangeRateMapper("mock")
 	if err != nil {
-		t.Errorf("TestHandler_Rate() err: %v", err)
+		t.Errorf("TestHandler_Rate() err = %v", err)
 	}
+	excRateBinance, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
+		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
+		InRate:  "btc-bitcoin",
+		OutRate: "uah-ukrainian-hryvnia",
+	})
+	if err != nil {
+		t.Errorf("TestHandler_Rate() err = %v", err)
+	}
+	excRateCoinpaprika.SetNext(excRateBinance)
 	emailServ := email.NewMockService(&config.EmailService{
 		APIKey:      "t",
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, rateMapper, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
 
 	r := SetUpRouter()
 	r.GET("/", h.Rate)
@@ -62,21 +68,21 @@ func TestHandler_RateWithError(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	excRate := exchangerate.NewMockExchangeRate(&config.ExchangeRate{
-		URLMask: "",
-		InRate:  "",
-		OutRate: "",
-	})
-	rateMapper, err := mapper.NewMockExchangeRateMapper("mock")
+	excRateCoinpaprika, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{})
 	if err != nil {
-		t.Errorf("TestHandler_RateWithError() err: %v", err)
+		t.Errorf("TestHandler_RateWithError() err = %v", err)
 	}
+	excRateBinance, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{})
+	if err != nil {
+		t.Errorf("TestHandler_RateWithError() err = %v", err)
+	}
+	excRateCoinpaprika.SetNext(excRateBinance)
 	emailServ := email.NewMockService(&config.EmailService{
 		APIKey:      "t",
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, rateMapper, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
 
 	r := SetUpRouter()
 	r.GET("/", h.Rate)
@@ -93,21 +99,29 @@ func TestHandler_Subscription(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	excRate := exchangerate.NewMockExchangeRate(&config.ExchangeRate{
+	excRateCoinpaprika, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
 		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
-		InRate:  "",
+		InRate:  "btc-bitcoin",
 		OutRate: "uah-ukrainian-hryvnia",
 	})
-	rateMapper, err := mapper.NewMockExchangeRateMapper("mock")
 	if err != nil {
-		t.Errorf("TestHandler_Subscription() err: %v", err)
+		t.Errorf("TestHandler_Subscription() err = %v", err)
 	}
+	excRateBinance, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
+		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
+		InRate:  "btc-bitcoin",
+		OutRate: "uah-ukrainian-hryvnia",
+	})
+	if err != nil {
+		t.Errorf("TestHandler_Subscription() err = %v", err)
+	}
+	excRateCoinpaprika.SetNext(excRateBinance)
 	emailServ := email.NewMockService(&config.EmailService{
 		APIKey:      "t",
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, rateMapper, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.Subscription)
@@ -128,21 +142,29 @@ func TestHandler_SubscriptionWithError(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	excRate := exchangerate.NewMockExchangeRate(&config.ExchangeRate{
+	excRateCoinpaprika, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
 		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
-		InRate:  "",
+		InRate:  "btc-bitcoin",
 		OutRate: "uah-ukrainian-hryvnia",
 	})
-	rateMapper, err := mapper.NewMockExchangeRateMapper("mock")
 	if err != nil {
-		t.Errorf("TestHandler_SubscriptionWithError() err: %v", err)
+		t.Errorf("TestHandler_SubscriptionWithError() err = %v", err)
 	}
+	excRateBinance, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
+		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
+		InRate:  "btc-bitcoin",
+		OutRate: "uah-ukrainian-hryvnia",
+	})
+	if err != nil {
+		t.Errorf("TestHandler_SubscriptionWithError() err = %v", err)
+	}
+	excRateCoinpaprika.SetNext(excRateBinance)
 	emailServ := email.NewMockService(&config.EmailService{
 		APIKey:      "t",
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, rateMapper, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.Subscription)
@@ -160,21 +182,29 @@ func TestHandler_SendEmails(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	excRate := exchangerate.NewMockExchangeRate(&config.ExchangeRate{
+	excRateCoinpaprika, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
 		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
 		InRate:  "btc-bitcoin",
 		OutRate: "uah-ukrainian-hryvnia",
 	})
-	rateMapper, err := mapper.NewMockExchangeRateMapper("mock")
 	if err != nil {
-		t.Errorf("TestHandler_SendEmails() err: %v", err)
+		t.Errorf("TestHandler_SendEmails() err = %v", err)
 	}
+	excRateBinance, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
+		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
+		InRate:  "btc-bitcoin",
+		OutRate: "uah-ukrainian-hryvnia",
+	})
+	if err != nil {
+		t.Errorf("TestHandler_SendEmails() err = %v", err)
+	}
+	excRateCoinpaprika.SetNext(excRateBinance)
 	emailServ := email.NewMockService(&config.EmailService{
 		APIKey:      "t",
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, rateMapper, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)
@@ -201,22 +231,29 @@ func TestHandler_SendEmailsWithErrorEmptyStorage(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	excRate := exchangerate.NewMockExchangeRate(&config.ExchangeRate{
+	excRateCoinpaprika, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
 		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
 		InRate:  "btc-bitcoin",
 		OutRate: "uah-ukrainian-hryvnia",
 	})
-	rateMapper, err := mapper.NewMockExchangeRateMapper("mock")
 	if err != nil {
-		t.Errorf("TestHandler_SendEmailsWithErrorEmptyStorage() err: %v", err)
+		t.Errorf("TestHandler_SendEmailsWithErrorEmptyStorage() err = %v", err)
 	}
+	excRateBinance, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
+		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
+		InRate:  "btc-bitcoin",
+		OutRate: "uah-ukrainian-hryvnia",
+	})
+	if err != nil {
+		t.Errorf("TestHandler_SendEmailsWithErrorEmptyStorage() err = %v", err)
+	}
+	excRateCoinpaprika.SetNext(excRateBinance)
 	emailServ := email.NewMockService(&config.EmailService{
 		APIKey:      "t",
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, rateMapper, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)
@@ -235,21 +272,29 @@ func TestHandler_SendEmailsWithErrorExchangeRateService(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	excRate := exchangerate.NewMockExchangeRate(&config.ExchangeRate{
+	excRateCoinpaprika, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
 		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
-		InRate:  "",
+		InRate:  "btc-bitcoin",
 		OutRate: "uah-ukrainian-hryvnia",
 	})
-	rateMapper, err := mapper.NewMockExchangeRateMapper("mock")
 	if err != nil {
-		t.Errorf("TestHandler_SendEmailsWithErrorExchangeRateService() err: %v", err)
+		t.Errorf("TestHandler_SendEmailsWithErrorExchangeRateService() err = %v", err)
 	}
+	excRateBinance, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
+		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
+		InRate:  "btc-bitcoin",
+		OutRate: "uah-ukrainian-hryvnia",
+	})
+	if err != nil {
+		t.Errorf("TestHandler_SendEmailsWithErrorExchangeRateService() err = %v", err)
+	}
+	excRateCoinpaprika.SetNext(excRateBinance)
 	emailServ := email.NewMockService(&config.EmailService{
 		APIKey:      "t",
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, rateMapper, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)
@@ -277,21 +322,29 @@ func TestHandler_SendEmailsWithErrorInEmailService(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	excRate := exchangerate.NewMockExchangeRate(&config.ExchangeRate{
+	excRateCoinpaprika, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
 		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
 		InRate:  "btc-bitcoin",
 		OutRate: "uah-ukrainian-hryvnia",
 	})
-	rateMapper, err := mapper.NewMockExchangeRateMapper("mock")
 	if err != nil {
-		t.Errorf("TestHandler_SendEmailsWithErrorInEmailService() err: %v", err)
+		t.Errorf("TestHandler_SendEmailsWithErrorInEmailService() err = %v", err)
 	}
+	excRateBinance, err := exchangerate.NewMockExchangeRate(&config.DefaultExchangeRate{
+		URLMask: "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1",
+		InRate:  "btc-bitcoin",
+		OutRate: "uah-ukrainian-hryvnia",
+	})
+	if err != nil {
+		t.Errorf("TestHandler_SendEmailsWithErrorInEmailService() err = %v", err)
+	}
+	excRateCoinpaprika.SetNext(excRateBinance)
 	emailServ := email.NewMockService(&config.EmailService{
 		APIKey:      "",
 		FromAddress: "",
 		FromName:    "",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, rateMapper, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)

@@ -67,11 +67,11 @@ func initApp(cfg *config.Config) (http.Handler, error) {
 		log.Fatal(err)
 	}
 
-	excRate, err := exchangerate.NewExchangeRate((*config.DefaultExchangeRate)(cfg.ExchangeRate.Coinpaprika))
+	excRate, err := exchangerate.NewExchangeRate(cfg.ExchangeRate.Coinpaprika)
 	if err != nil {
 		log.Fatal(err)
 	}
-	excRateBinance, err := exchangerate.NewExchangeRate((*config.DefaultExchangeRate)(cfg.ExchangeRate.Binance))
+	excRateBinance, err := exchangerate.NewExchangeRate(cfg.ExchangeRate.Binance)
 	if err != nil {
 		log.Fatal(err)
 	}

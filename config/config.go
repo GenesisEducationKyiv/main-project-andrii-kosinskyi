@@ -22,8 +22,8 @@ type Server struct {
 }
 
 type ExchangeRate struct {
-	Binance     *Binance
-	Coinpaprika *Coinpaprika
+	Binance     *DefaultExchangeRate
+	Coinpaprika *DefaultExchangeRate
 }
 
 type DefaultExchangeRate struct {
@@ -31,24 +31,6 @@ type DefaultExchangeRate struct {
 	URLMask     string `toml:"url_mask"`
 	InRate      string `toml:"in_rate_name"`
 	OutRate     string `toml:"out_rate_name"`
-}
-
-type Binance DefaultExchangeRate
-
-type Coinpaprika DefaultExchangeRate
-
-func (that *Binance) Empty() error {
-	if that.URLMask == "" || that.InRate == "" || that.OutRate == "" || that.ServiceName == "" {
-		return ErrEmptyConfig
-	}
-	return nil
-}
-
-func (that *Coinpaprika) Empty() error {
-	if that.URLMask == "" || that.InRate == "" || that.OutRate == "" || that.ServiceName == "" {
-		return ErrEmptyConfig
-	}
-	return nil
 }
 
 func (that *DefaultExchangeRate) Empty() error {
