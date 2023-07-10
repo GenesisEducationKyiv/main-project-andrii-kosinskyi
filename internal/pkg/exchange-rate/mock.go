@@ -12,7 +12,7 @@ type MockExchangeRate struct {
 	url string
 }
 
-func NewMockExchangeRate(c *config.ExchangeRate) *MockExchangeRate {
+func NewMockExchangeRate(c *config.DefaultExchangeRate) *MockExchangeRate {
 	return &MockExchangeRate{url: fmt.Sprintf("%s%s%s", c.URLMask, c.InRate, c.OutRate)}
 }
 

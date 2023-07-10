@@ -1,7 +1,12 @@
 package exchangerate
 
-import "context"
+import (
+	"context"
+
+	"bitcoin_checker_api/internal/model"
+)
 
 type ExchangeRater interface {
-	Get(ctx context.Context) ([]byte, error)
+	Get(ctx context.Context) (*model.ExchangeRate, error)
+	SetNext(next ExchangeRater)
 }

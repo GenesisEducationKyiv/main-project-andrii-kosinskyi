@@ -1,9 +1,10 @@
 package mapper_test
 
 import (
-	"bitcoin_checker_api/internal/pkg/mapper"
 	"errors"
 	"testing"
+
+	"bitcoin_checker_api/internal/pkg/mapper"
 )
 
 func TestName(t *testing.T) {

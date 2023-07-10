@@ -4,10 +4,17 @@ port = 8080
 [storage]
 path = "./storage.json"
 
-[exchangerate]
+[exchangerate.coinpaprika]
+service_name = "coinpaprika"
 url_mask = "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1"
-in_rate_name = "btc-bitcoin"
+in_rate_name = "btc-bitcoin_test"
 out_rate_name = "uah-ukrainian-hryvnia"
+
+[exchangerate.binance]
+service_name = "binance"
+url_mask = "https://api.binance.com/api/v3/ticker/price?symbol=%s%s"
+in_rate_name = "BTC"
+out_rate_name = "UAH"
 
 [emailservice]
 api_key="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"

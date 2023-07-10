@@ -22,14 +22,37 @@ type Server struct {
 }
 
 type ExchangeRate struct {
-	URLMask string `toml:"url_mask"`
-	InRate  string `toml:"in_rate_name"`
-	OutRate string `toml:"out_rate_name"`
-	EmptyConfigChecker
+	Binance     *Binance
+	Coinpaprika *Coinpaprika
 }
 
-func (that *ExchangeRate) Empty() error {
-	if that.URLMask == "" || that.InRate == "" || that.OutRate == "" {
+type DefaultExchangeRate struct {
+	ServiceName string `toml:"service_name"`
+	URLMask     string `toml:"url_mask"`
+	InRate      string `toml:"in_rate_name"`
+	OutRate     string `toml:"out_rate_name"`
+}
+
+type Binance DefaultExchangeRate
+
+type Coinpaprika DefaultExchangeRate
+
+func (that *Binance) Empty() error {
+	if that.URLMask == "" || that.InRate == "" || that.OutRate == "" || that.ServiceName == "" {
+		return ErrEmptyConfig
+	}
+	return nil
+}
+
+func (that *Coinpaprika) Empty() error {
+	if that.URLMask == "" || that.InRate == "" || that.OutRate == "" || that.ServiceName == "" {
+		return ErrEmptyConfig
+	}
+	return nil
+}
+
+func (that *DefaultExchangeRate) Empty() error {
+	if that.URLMask == "" || that.InRate == "" || that.OutRate == "" || that.ServiceName == "" {
 		return ErrEmptyConfig
 	}
 	return nil
@@ -43,7 +66,6 @@ type EmailService struct {
 	APIKey      string `toml:"api_key"`
 	FromAddress string `toml:"from_address"`
 	FromName    string `toml:"from_name"`
-	EmptyConfigChecker
 }
 
 func (that *EmailService) Empty() error {
@@ -95,10 +117,22 @@ func (that *Config) validConfig() error {
 		return err
 	}
 
-	if err := that.ExchangeRate.Empty(); err != nil {
+	if err := that.ExchangeRate.Binance.Empty(); err != nil {
 		return err
 	}
 
-	rawURL := fmt.Sprintf(that.ExchangeRate.URLMask, that.ExchangeRate.InRate, that.ExchangeRate.OutRate)
-	return validator.ValidURL(rawURL)
+	if err := that.ExchangeRate.Coinpaprika.Empty(); err != nil {
+		return err
+	}
+
+	rawBinanceURL := fmt.Sprintf(that.ExchangeRate.Binance.URLMask, that.ExchangeRate.Binance.InRate, that.ExchangeRate.Binance.OutRate)
+	if err := validator.ValidURL(rawBinanceURL); err != nil {
+		return err
+	}
+
+	rawCoinpaprikaURL := fmt.Sprintf(that.ExchangeRate.Coinpaprika.URLMask, that.ExchangeRate.Coinpaprika.InRate, that.ExchangeRate.Coinpaprika.OutRate)
+	if err := validator.ValidURL(rawCoinpaprikaURL); err != nil {
+		return err
+	}
+	return nil
 }

@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 
 	"bitcoin_checker_api/internal/model"
 	"bitcoin_checker_api/internal/pkg/mapper"
@@ -19,11 +18,10 @@ type UseCase struct {
 	emailService email.Emailer
 }
 
-func NewUseCase(r repository.Repository, er exchangerate.ExchangeRater, m mapper.Mapper, es email.Emailer) *UseCase {
+func NewUseCase(r repository.Repository, er exchangerate.ExchangeRater, es email.Emailer) *UseCase {
 	return &UseCase{
 		repository:   r,
 		exchangeRate: er,
-		mapper:       m,
 		emailService: es,
 	}
 }
@@ -52,14 +50,9 @@ func (that *UseCase) SendEmailsWithExchangeRate(ctx context.Context) error {
 }
 
 func (that *UseCase) ExchangeRate(ctx context.Context) (*model.ExchangeRate, error) {
-	data, err := that.exchangeRate.Get(ctx)
+	exchangeRate, err := that.exchangeRate.Get(ctx)
 	if err != nil {
 		return nil, err
-	}
-
-	exchangeRate, err := that.mapper.Map(data)
-	if err != nil {
-		return nil, fmt.Errorf("error from %s : %w", that.mapper.Name(), err)
 	}
 
 	return exchangeRate, nil

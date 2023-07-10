@@ -11,8 +11,6 @@ import (
 	"syscall"
 	"time"
 
-	"bitcoin_checker_api/internal/pkg/mapper"
-
 	"bitcoin_checker_api/internal/pkg/email"
 	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/repository"
@@ -69,14 +67,18 @@ func initApp(cfg *config.Config) (http.Handler, error) {
 		log.Fatal(err)
 	}
 
-	excRate := exchangerate.NewExchangeRate(&cfg.ExchangeRate)
-	excRateMapper, _ := mapper.NewExchangeRateMapper(mapper.CoinPaprikaService)
+	excRate, err := exchangerate.NewExchangeRate((*config.DefaultExchangeRate)(cfg.ExchangeRate.Coinpaprika))
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
+	excRateBinance, err := exchangerate.NewExchangeRate((*config.DefaultExchangeRate)(cfg.ExchangeRate.Binance))
+	if err != nil {
+		log.Fatal(err)
+	}
+	excRate.SetNext(excRateBinance)
 	emailServ := email.NewService(&cfg.EmailService)
 
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, excRateMapper, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
 
 	router := gin.Default()
 	v1 := router.Group("/api")
