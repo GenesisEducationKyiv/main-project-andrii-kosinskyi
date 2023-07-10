@@ -43,7 +43,6 @@ func (that *ExchangeRate) Get(ctx context.Context) (*model.ExchangeRate, error) 
 			return nil, err
 		}
 		body, err = next.Get(ctx)
-
 	}
 	return body, err
 }
@@ -59,7 +58,6 @@ func (that *ExchangeRate) get(ctx context.Context) (*model.ExchangeRate, error) 
 		return nil, err
 	}
 	defer res.Body.Close()
-
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err

@@ -58,5 +58,4 @@ func TestExchangeRate_SetNext(t *testing.T) {
 	if err != nil {
 		t.Errorf("TestExchangeRate_Get() err = %v", err)
 	}
-
 }

@@ -106,15 +106,12 @@ func (that *Config) validConfig() error {
 	if err := that.ExchangeRate.Coinpaprika.Empty(); err != nil {
 		return err
 	}
-
+	//nolint:lll
 	rawBinanceURL := fmt.Sprintf(that.ExchangeRate.Binance.URLMask, that.ExchangeRate.Binance.InRate, that.ExchangeRate.Binance.OutRate)
 	if err := validator.ValidURL(rawBinanceURL); err != nil {
 		return err
 	}
-
+	//nolint:lll
 	rawCoinpaprikaURL := fmt.Sprintf(that.ExchangeRate.Coinpaprika.URLMask, that.ExchangeRate.Coinpaprika.InRate, that.ExchangeRate.Coinpaprika.OutRate)
-	if err := validator.ValidURL(rawCoinpaprikaURL); err != nil {
-		return err
-	}
-	return nil
+	return validator.ValidURL(rawCoinpaprikaURL)
 }

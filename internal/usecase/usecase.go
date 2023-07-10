@@ -4,8 +4,6 @@ import (
 	"context"
 
 	"bitcoin_checker_api/internal/model"
-	"bitcoin_checker_api/internal/pkg/mapper"
-
 	"bitcoin_checker_api/internal/pkg/email"
 	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/repository"
@@ -14,7 +12,6 @@ import (
 type UseCase struct {
 	repository   repository.Repository
 	exchangeRate exchangerate.ExchangeRater
-	mapper       mapper.Mapper
 	emailService email.Emailer
 }
 

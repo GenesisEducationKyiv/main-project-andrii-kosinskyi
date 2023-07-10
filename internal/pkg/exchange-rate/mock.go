@@ -1,10 +1,11 @@
 package exchangerate
 
 import (
-	"bitcoin_checker_api/internal/model"
 	"context"
 	"fmt"
 	"net/http"
+
+	"bitcoin_checker_api/internal/model"
 
 	"bitcoin_checker_api/config"
 )
@@ -18,7 +19,6 @@ func NewMockExchangeRate(c *config.DefaultExchangeRate) (*MockExchangeRate, erro
 }
 
 func (that *MockExchangeRate) SetNext(_ ExchangeRater) {
-
 }
 
 func (that *MockExchangeRate) Get(_ context.Context) (*model.ExchangeRate, error) {

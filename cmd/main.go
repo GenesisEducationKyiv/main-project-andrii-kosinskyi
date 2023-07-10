@@ -70,10 +70,12 @@ func initApp(cfg *config.Config) (http.Handler, error) {
 	excRate, err := exchangerate.NewExchangeRate(cfg.ExchangeRate.Coinpaprika)
 	if err != nil {
 		log.Fatal(err)
+		return nil, err
 	}
 	excRateBinance, err := exchangerate.NewExchangeRate(cfg.ExchangeRate.Binance)
 	if err != nil {
 		log.Fatal(err)
+		return nil, err
 	}
 	excRate.SetNext(excRateBinance)
 	emailServ := email.NewService(&cfg.EmailService)
