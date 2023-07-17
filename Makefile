@@ -28,7 +28,7 @@ lint:
 # curl call for test endpoints
 .PHONY: rate
 rate:
-	curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://localhost:8080/api/rate
+	curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://localhost:8080/api/rate?format=yaml
 
 .PHONY: subscribe
 subscribe:

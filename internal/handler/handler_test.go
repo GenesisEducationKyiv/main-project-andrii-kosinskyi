@@ -2,6 +2,7 @@
 package handler_test
 
 import (
+	"bitcoin_checker_api/internal/renderer"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -51,7 +52,8 @@ func TestHandler_Rate(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
+
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ), renderer.NewRender())
 
 	r := SetUpRouter()
 	r.GET("/", h.Rate)
@@ -82,7 +84,7 @@ func TestHandler_RateWithError(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ), renderer.NewRender())
 
 	r := SetUpRouter()
 	r.GET("/", h.Rate)
@@ -121,7 +123,7 @@ func TestHandler_Subscription(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ), renderer.NewRender())
 
 	r := SetUpRouter()
 	r.POST("/", h.Subscription)
@@ -164,7 +166,7 @@ func TestHandler_SubscriptionWithError(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ), renderer.NewRender())
 
 	r := SetUpRouter()
 	r.POST("/", h.Subscription)
@@ -204,7 +206,7 @@ func TestHandler_SendEmails(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ), renderer.NewRender())
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)
@@ -253,7 +255,7 @@ func TestHandler_SendEmailsWithErrorEmptyStorage(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ), renderer.NewRender())
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)
@@ -294,7 +296,7 @@ func TestHandler_SendEmailsWithErrorExchangeRateService(t *testing.T) {
 		FromAddress: "t",
 		FromName:    "t",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ), renderer.NewRender())
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)
@@ -344,7 +346,7 @@ func TestHandler_SendEmailsWithErrorInEmailService(t *testing.T) {
 		FromAddress: "",
 		FromName:    "",
 	})
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRateCoinpaprika, emailServ), renderer.NewRender())
 
 	r := SetUpRouter()
 	r.POST("/", h.SendEmails)

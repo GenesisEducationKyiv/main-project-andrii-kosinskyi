@@ -11,6 +11,8 @@ import (
 	"syscall"
 	"time"
 
+	"bitcoin_checker_api/internal/renderer"
+
 	"bitcoin_checker_api/internal/pkg/email"
 	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/repository"
@@ -79,8 +81,8 @@ func initApp(cfg *config.Config) (http.Handler, error) {
 	}
 	excRate.SetNext(excRateBinance)
 	emailServ := email.NewService(&cfg.EmailService)
-
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ))
+	renderServ := renderer.NewRender()
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ), renderServ)
 
 	router := gin.Default()
 	v1 := router.Group("/api")
