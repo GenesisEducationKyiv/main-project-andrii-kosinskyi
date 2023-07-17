@@ -1,4 +1,4 @@
-package tests
+package tests_test
 
 import (
 	"strings"
@@ -125,11 +125,7 @@ func (t *testingT) Error(args ...interface{}) {
 }
 
 func (t testingT) errored() bool {
-	if len(t.errors) != 0 {
-		return true
-	}
-
-	return false
+	return len(t.errors) != 0
 }
 
 func (t *testingT) message() interface{} {
