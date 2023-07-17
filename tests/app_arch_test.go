@@ -1,9 +1,10 @@
 package tests
 
 import (
-	"github.com/matthewmcnew/archtest"
 	"strings"
 	"testing"
+
+	"github.com/matthewmcnew/archtest"
 )
 
 func TestPackage_ShouldNotDependOn(t *testing.T) {
@@ -84,7 +85,6 @@ func TestPackage_ShouldNotDependOn(t *testing.T) {
 			"bitcoin_checker_api/internal/pkg/exchange-rate",
 			"bitcoin_checker_api/internal/model")
 	})
-
 }
 
 func assertNoError(t *testing.T, mockT *testingT) {
@@ -130,7 +130,6 @@ func (t testingT) errored() bool {
 	}
 
 	return false
-
 }
 
 func (t *testingT) message() interface{} {

@@ -2,13 +2,14 @@
 package handler_test
 
 import (
-	"bitcoin_checker_api/internal/renderer"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
 	"testing"
+
+	"bitcoin_checker_api/internal/renderer"
 
 	"bitcoin_checker_api/internal/handler"
 
