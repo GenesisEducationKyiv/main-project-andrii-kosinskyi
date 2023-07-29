@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-	"os"
-
+	"bitcoin_checker_api/internal/logger"
 	"bitcoin_checker_api/internal/renderer"
+	"fmt"
+	"net/http"
 
 	"bitcoin_checker_api/internal/validator"
 
@@ -18,12 +16,14 @@ import (
 type Handler struct {
 	useCase       *usecase.UseCase
 	renderService *renderer.Render
+	log           logger.ILog
 }
 
-func NewHandler(u *usecase.UseCase, r *renderer.Render) *Handler {
+func NewHandler(u *usecase.UseCase, r *renderer.Render, l logger.ILog) *Handler {
 	return &Handler{
 		useCase:       u,
 		renderService: r,
+		log:           l,
 	}
 }
 
@@ -32,42 +32,42 @@ func handlerEndpoint(c *gin.Context) string {
 }
 
 func (that *Handler) Rate(c *gin.Context) {
-	log.Printf("endpoint: %s request: %s", handlerEndpoint(c), http.NoBody)
+	that.log.Info(c, fmt.Sprintf("endpoint: %s request: %s", handlerEndpoint(c), http.NoBody))
 	exchangeRate, err := that.useCase.ExchangeRate(c)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", handlerEndpoint(c), err)
+		that.log.Error(c, fmt.Sprintf("endpoint: %s error: %s", handlerEndpoint(c), err))
 		that.renderService.SendError(c, http.StatusBadRequest, ErrInvStatVal)
 		return
 	}
-	log.Printf("endpoint: %s response: %v", handlerEndpoint(c), exchangeRate)
+	that.log.Info(c, fmt.Sprintf("endpoint: %s response: %v", handlerEndpoint(c), exchangeRate))
 	that.renderService.SendSuccess(c, exchangeRate)
 }
 
 func (that *Handler) Subscription(c *gin.Context) {
-	log.Printf("endpoint: %s request: %s", handlerEndpoint(c), c.PostForm("email"))
+	that.log.Info(c, fmt.Sprintf("endpoint: %s request: %s", handlerEndpoint(c), c.PostForm("email")))
 	email := c.PostForm("email")
 	if err := validator.ValidMailAddress(email); err != nil {
-		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", handlerEndpoint(c), err)
+		that.log.Error(c, fmt.Sprintf("endpoint: %s error: %s", handlerEndpoint(c), err))
 		that.renderService.SendError(c, http.StatusConflict, ErrInvSubEmail)
 		return
 	}
 	if err := that.useCase.SubscribeEmailOnExchangeRate(email); err != nil {
-		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", handlerEndpoint(c), err)
+		that.log.Error(c, fmt.Sprintf("endpoint: %s error: %s", handlerEndpoint(c), err))
 		that.renderService.SendError(c, http.StatusConflict, ErrInvSubEmail)
 		return
 	}
-	log.Printf("endpoint: %s response: %s", handlerEndpoint(c), EmailAdded)
+	that.log.Info(c, fmt.Sprintf("endpoint: %s response: %s", handlerEndpoint(c), EmailAdded))
 	that.renderService.SendSuccess(c, EmailAdded)
 }
 
 func (that *Handler) SendEmails(c *gin.Context) {
-	log.Printf("endpoint: %s request: %s", handlerEndpoint(c), http.NoBody)
+	that.log.Info(c, fmt.Sprintf("endpoint: %s request: %s", handlerEndpoint(c), http.NoBody))
 	err := that.useCase.SendEmailsWithExchangeRate(c)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", handlerEndpoint(c), err)
+		that.log.Error(c, fmt.Sprintf("endpoint: %s error: %s", handlerEndpoint(c), err))
 		that.renderService.SendError(c, http.StatusConflict, ErrEmailsNotSent)
 		return
 	}
-	log.Printf("endpoint: %s response: %s", handlerEndpoint(c), EmailsSent)
+	that.log.Info(c, fmt.Sprintf("endpoint: %s response: %s", handlerEndpoint(c), EmailsSent))
 	that.renderService.SendSuccess(c, EmailsSent)
 }
