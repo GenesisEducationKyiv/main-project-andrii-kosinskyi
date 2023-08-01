@@ -5,6 +5,11 @@ on:
       - main
       - homework_1
       - homework_2_tests
+      - homework_3_solid_grasp
+      - homework_4_patterns
+      - homework_5_app_arch
+      - homework_6_molit_and_microservices
+      - homework_7_broker_and_logger
   pull_request:
 
 permissions:
