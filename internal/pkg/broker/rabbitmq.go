@@ -1,11 +1,13 @@
 package broker
 
 import (
-	"bitcoin_checker_api/config"
 	"context"
 	"fmt"
-	amqp "github.com/rabbitmq/amqp091-go"
 	"time"
+
+	"bitcoin_checker_api/config"
+
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type RabbitMQ struct {
@@ -45,7 +47,8 @@ func NewRabbitMQ(cfg config.RabbitMQ) (*RabbitMQ, error) {
 		BrokerName:   RabbitmqBrokerName,
 		RoutingKey:   cfg.RoutingKey,
 		LogsExchange: cfg.LogsExchange,
-		LogsQueue:    cfg.LogsQueue}, nil
+		LogsQueue:    cfg.LogsQueue,
+	}, nil
 }
 
 func NewRabbitMQService(rbmq Connection, e, q, r string) (*RabbitMQService, error) {
@@ -63,6 +66,7 @@ func NewRabbitMQService(rbmq Connection, e, q, r string) (*RabbitMQService, erro
 func (that *RabbitMQService) Send(message []byte) error {
 	return that.connection.Send(message, that.exchange, that.routingKey)
 }
+
 func (that *RabbitMQService) SendErr(message []byte) error {
 	return that.connection.Send(message, that.exchange, that.routingKey+ErrRoutingKeyPostfix)
 }
@@ -79,7 +83,7 @@ func initExchangeAndQueue(rmbq *RabbitMQ, exchangeName, queueName, routingKey st
 		false,        // autoDelete
 		false,        // internal
 		false,        // noWait,
-		nil,          //args
+		nil,          // args
 	)
 	if err != nil {
 		return nil
@@ -134,7 +138,6 @@ func (that *RabbitMQ) Send(message []byte, exchangeName, routingKey string) erro
 			ContentType: "application/json",
 			Body:        message,
 		})
-
 	if err != nil {
 		return err
 	}

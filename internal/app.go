@@ -1,6 +1,9 @@
 package internal
 
 import (
+	"log"
+	"net/http"
+
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/handler"
 	"bitcoin_checker_api/internal/logger"
@@ -11,8 +14,6 @@ import (
 	"bitcoin_checker_api/internal/repository"
 	"bitcoin_checker_api/internal/usecase"
 	"github.com/gin-gonic/gin"
-	"log"
-	"net/http"
 )
 
 func InitApp(cfg *config.Config) (http.Handler, error) {

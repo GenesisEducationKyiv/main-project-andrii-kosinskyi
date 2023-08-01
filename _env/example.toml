@@ -6,13 +6,13 @@ path = "./storage.json"
 
 [exchangerate.coinpaprika]
 service_name = "coinpaprika"
-url_mask = "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1"
+url_mask = "https://api.coinpaprika.com/v1/price-converter?base_currency_id=%s&quote_currency_id=%s&amount=1-test"
 in_rate_name = "btc-bitcoin_test"
 out_rate_name = "uah-ukrainian-hryvnia"
 
 [exchangerate.binance]
 service_name = "binance"
-url_mask = "https://data.binance.com/api/v3/ticker/price?symbol=%s%s"
+url_mask = "https://data.binance.com/api/v3/ticker/price?symbol=%s%s-test"
 in_rate_name = "BTC"
 out_rate_name = "UAH"
 

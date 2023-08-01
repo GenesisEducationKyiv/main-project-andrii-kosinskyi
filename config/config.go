@@ -89,7 +89,7 @@ type Config struct {
 	EmailService EmailService
 	Logger       Logger
 	RabbitMQ     RabbitMQ
-	//Kafka        Broker
+	// Kafka        Broker
 }
 
 func (that *Config) Load() error {

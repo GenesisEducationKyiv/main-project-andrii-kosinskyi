@@ -2,7 +2,6 @@
 package main
 
 import (
-	"bitcoin_checker_api/internal"
 	"context"
 	"log"
 	"net/http"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"syscall"
 	"time"
+
+	"bitcoin_checker_api/internal"
 
 	"bitcoin_checker_api/config"
 )

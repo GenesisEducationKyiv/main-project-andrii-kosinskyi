@@ -52,4 +52,4 @@ sendMails:
 
 .PHONY: rbmq_logs
 rbmq_logs:
-	@go run cmd/rabbitmqlogs.go
+	@bash cmd/consume-message.sh

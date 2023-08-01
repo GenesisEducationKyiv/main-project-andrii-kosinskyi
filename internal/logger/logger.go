@@ -1,12 +1,13 @@
 package logger
 
 import (
-	"bitcoin_checker_api/internal/pkg/broker"
 	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 	"time"
+
+	"bitcoin_checker_api/internal/pkg/broker"
 )
 
 const (
@@ -43,13 +44,13 @@ func (that *DefaultLog) print(level int, msg string) {
 		LogLevel: levelMap[level],
 		Message:  msg,
 	})
-
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 	}
 
 	if level == ErrorLevel {
 		fmt.Fprint(os.Stderr, string(bytes)+"\n")
+		//nolint:typecheck
 		if that.brokerSrv != nil {
 			err := that.brokerSrv.SendErr(bytes)
 			if err != nil {
@@ -59,7 +60,7 @@ func (that *DefaultLog) print(level int, msg string) {
 	} else {
 		fmt.Fprint(os.Stdout, string(bytes)+"\n")
 	}
-
+	//nolint:typecheck
 	if that.brokerSrv != nil {
 		err := that.brokerSrv.Send(bytes)
 		if err != nil {
