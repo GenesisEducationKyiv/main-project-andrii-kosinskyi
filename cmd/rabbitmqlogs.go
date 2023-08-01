@@ -35,13 +35,13 @@ func main() {
 	failOnError(err, "Failed to declare a queue")
 
 	msgs, err := rabbitmqConn.Chanel.Consume(
-		q.Name, // queue
-		"",     // consumer
-		true,   // auto-ack
-		false,  // exclusive
-		false,  // no-local
-		false,  // no-wait
-		nil,    // args
+		q.Name+broker.ErrRoutingKeyPostfix, // queue
+		"",                                 // consumer
+		true,                               // auto-ack
+		false,                              // exclusive
+		false,                              // no-local
+		false,                              // no-wait
+		nil,                                // args
 	)
 	failOnError(err, "Failed to register a consumer")
 

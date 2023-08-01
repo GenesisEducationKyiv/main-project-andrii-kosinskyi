@@ -61,6 +61,7 @@ type RabbitMQ struct {
 	Password     string `toml:"password"`
 	Host         string `toml:"host"`
 	Port         string `toml:"port"`
+	RoutingKey   string `toml:"routing_key_logs"`
 	LogsExchange string `toml:"logs_exchange"`
 	LogsQueue    string `toml:"logs_queue"`
 }

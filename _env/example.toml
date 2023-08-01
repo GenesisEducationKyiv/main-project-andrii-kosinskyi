@@ -29,6 +29,7 @@ user="myuser"
 password="mypassword"
 host ="rabbitmq" #localhost"
 port="5672"
+routing_key_logs = "logs"
 logs_exchange = "logs-exchange"
 logs_queue="logs-queue"
 

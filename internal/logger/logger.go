@@ -50,6 +50,12 @@ func (that *DefaultLog) print(level int, msg string) {
 
 	if level == ErrorLevel {
 		fmt.Fprint(os.Stderr, string(bytes)+"\n")
+		if that.brokerSrv != nil {
+			err := that.brokerSrv.SendErr(bytes)
+			if err != nil {
+				fmt.Fprint(os.Stderr, err.Error()+"\n")
+			}
+		}
 	} else {
 		fmt.Fprint(os.Stdout, string(bytes)+"\n")
 	}
