@@ -13,6 +13,7 @@ import (
 	"bitcoin_checker_api/internal/renderer"
 	"bitcoin_checker_api/internal/repository"
 	"bitcoin_checker_api/internal/usecase"
+
 	"github.com/gin-gonic/gin"
 )
 
