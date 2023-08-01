@@ -6,37 +6,69 @@ import (
 	"io"
 	"net/http"
 
+	"bitcoin_checker_api/internal/model"
+	"bitcoin_checker_api/internal/pkg/mapper"
+
 	"bitcoin_checker_api/config"
 )
 
 type ExchangeRate struct {
-	url string
+	serviceName string
+	url         string
+	next        ExchangeRater
+	mapper      mapper.Mapper
 }
 
-func NewExchangeRate(c *config.ExchangeRate) *ExchangeRate {
-	return &ExchangeRate{url: fmt.Sprintf(c.URLMask, c.InRate, c.OutRate)}
+func NewExchangeRate(c *config.DefaultExchangeRate) (*ExchangeRate, error) {
+	erMapper, err := mapper.NewExchangeRateMapper(c.ServiceName)
+	if err != nil {
+		return nil, err
+	}
+	return &ExchangeRate{
+		serviceName: c.ServiceName,
+		url:         fmt.Sprintf(c.URLMask, c.InRate, c.OutRate),
+		mapper:      erMapper,
+	}, nil
 }
 
-func (that *ExchangeRate) Get(ctx context.Context) ([]byte, error) {
+func (that *ExchangeRate) SetNext(next ExchangeRater) {
+	that.next = next
+}
+
+func (that *ExchangeRate) Get(ctx context.Context) (*model.ExchangeRate, error) {
+	body, err := that.get(ctx)
+	if err != nil {
+		next := that.next
+		if next == nil {
+			return nil, err
+		}
+		body, err = next.Get(ctx)
+	}
+	return body, err
+}
+
+func (that *ExchangeRate) get(ctx context.Context) (*model.ExchangeRate, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, that.url, nil)
 	if err != nil {
-		return make([]byte, 0), err
+		return nil, err
 	}
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return make([]byte, 0), err
+		return nil, err
 	}
 	defer res.Body.Close()
-
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return make([]byte, 0), err
+		return nil, err
 	}
 
 	if res.StatusCode != http.StatusOK {
-		return make([]byte, 0), fmt.Errorf("ExchageRate.Get() Response: %s status code: %d", body, res.StatusCode)
+		return nil, fmt.Errorf("ExchageRate.Get() Response: %s status code: %d", body, res.StatusCode)
 	}
-
-	return body, nil
+	er, err := that.mapper.Map(body)
+	if err != nil {
+		return nil, err
+	}
+	return er, nil
 }

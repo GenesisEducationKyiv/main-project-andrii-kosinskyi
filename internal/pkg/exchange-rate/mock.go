@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"bitcoin_checker_api/internal/model"
+
 	"bitcoin_checker_api/config"
 )
 
@@ -12,14 +14,17 @@ type MockExchangeRate struct {
 	url string
 }
 
-func NewMockExchangeRate(c *config.ExchangeRate) *MockExchangeRate {
-	return &MockExchangeRate{url: fmt.Sprintf("%s%s%s", c.URLMask, c.InRate, c.OutRate)}
+func NewMockExchangeRate(c *config.DefaultExchangeRate) (*MockExchangeRate, error) {
+	return &MockExchangeRate{url: fmt.Sprintf("%s%s%s", c.URLMask, c.InRate, c.OutRate)}, nil
 }
 
-func (that *MockExchangeRate) Get(_ context.Context) ([]byte, error) {
+func (that *MockExchangeRate) SetNext(_ ExchangeRater) {
+}
+
+func (that *MockExchangeRate) Get(_ context.Context) (*model.ExchangeRate, error) {
 	if that.url == "" {
-		return make([]byte, 0), fmt.Errorf("ExchageRate.Get() Response: %s status code: %d", "", http.StatusNotFound)
+		return nil, fmt.Errorf("ExchageRate.Get() Response: %s status code: %d", "", http.StatusNotFound)
 	}
 
-	return make([]byte, 1), nil
+	return &model.ExchangeRate{}, nil
 }

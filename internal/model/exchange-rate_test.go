@@ -24,7 +24,8 @@ func TestNewExchangeRate(t *testing.T) {
 			base:  "Bitcoin",
 			quote: "Ukrainian Hryvnia",
 			price: 20000.0202,
-			want:  want{base: "Bitcoin", quote: "Ukrainian Hryvnia", price: 20000.0202}},
+			want:  want{base: "Bitcoin", quote: "Ukrainian Hryvnia", price: 20000.0202},
+		},
 	}
 
 	for _, tt := range tests {
