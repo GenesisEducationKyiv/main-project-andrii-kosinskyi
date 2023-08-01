@@ -13,7 +13,8 @@ func LoggerServiceFactory(brokerName string, brokerMap map[string]Connection) (S
 	}
 	switch brokerName {
 	case RabbitmqBrokerName:
-		return NewRabbitMQService(conn, conn.(*RabbitMQ).LogsExchange, conn.(*RabbitMQ).LogsQueue, conn.(*RabbitMQ).RoutingKey)
+		return NewRabbitMQService(conn, conn.(*RabbitMQ).LogsExchange, conn.(*RabbitMQ).LogsQueue,
+			conn.(*RabbitMQ).RoutingKey)
 	case KafkaBrokerName:
 		return nil, ErrUnknownName
 	default:

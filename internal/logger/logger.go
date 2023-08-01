@@ -26,6 +26,7 @@ type LogMessage struct {
 	Message  string    `json:"msg"`
 }
 
+//nolint:gochecknoglobals
 var levelMap map[int]string
 
 func NewLog(brokerSrv broker.Service) *DefaultLog {
@@ -38,7 +39,7 @@ func NewLog(brokerSrv broker.Service) *DefaultLog {
 	return &DefaultLog{brokerSrv: brokerSrv}
 }
 
-func (that *DefaultLog) print(level int, msg string) {
+func (that *DefaultLog) printLog(level int, msg string) {
 	bytes, err := json.Marshal(&LogMessage{
 		Time:     time.Now(),
 		LogLevel: levelMap[level],
@@ -52,7 +53,7 @@ func (that *DefaultLog) print(level int, msg string) {
 		fmt.Fprint(os.Stderr, string(bytes)+"\n")
 		//nolint:typecheck
 		if that.brokerSrv != nil {
-			err := that.brokerSrv.SendErr(bytes)
+			err = that.brokerSrv.SendErr(bytes)
 			if err != nil {
 				fmt.Fprint(os.Stderr, err.Error()+"\n")
 			}
@@ -62,21 +63,21 @@ func (that *DefaultLog) print(level int, msg string) {
 	}
 	//nolint:typecheck
 	if that.brokerSrv != nil {
-		err := that.brokerSrv.Send(bytes)
+		err = that.brokerSrv.Send(bytes)
 		if err != nil {
 			fmt.Fprint(os.Stderr, err.Error()+"\n")
 		}
 	}
 }
 
-func (that *DefaultLog) Debug(ctx context.Context, msg string) {
-	that.print(DebugLevel, msg)
+func (that *DefaultLog) Debug(_ context.Context, msg string) {
+	that.printLog(DebugLevel, msg)
 }
 
-func (that *DefaultLog) Info(ctx context.Context, msg string) {
-	that.print(InfoLevel, msg)
+func (that *DefaultLog) Info(_ context.Context, msg string) {
+	that.printLog(InfoLevel, msg)
 }
 
-func (that *DefaultLog) Error(ctx context.Context, msg string) {
-	that.print(ErrorLevel, msg)
+func (that *DefaultLog) Error(_ context.Context, msg string) {
+	that.printLog(ErrorLevel, msg)
 }

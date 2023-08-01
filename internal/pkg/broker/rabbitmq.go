@@ -3,6 +3,7 @@ package broker
 import (
 	"context"
 	"fmt"
+	"net"
 	"time"
 
 	"bitcoin_checker_api/config"
@@ -29,10 +30,11 @@ type RabbitMQService struct {
 const (
 	RabbitmqBrokerName   = "rabbitmq"
 	ErrRoutingKeyPostfix = "-error"
+	timeout              = 5 * time.Second
 )
 
 func NewRabbitMQ(cfg config.RabbitMQ) (*RabbitMQ, error) {
-	url := fmt.Sprintf("amqp://%s:%s@%s:%s/", cfg.User, cfg.Password, cfg.Host, cfg.Port)
+	url := fmt.Sprintf("amqp://%s:%s@%s/", cfg.User, cfg.Password, net.JoinHostPort(cfg.Host, cfg.Port))
 	conn, err := amqp.Dial(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to RabbitMQ %w", err)
@@ -86,7 +88,7 @@ func initExchangeAndQueue(rmbq *RabbitMQ, exchangeName, queueName, routingKey st
 		nil,          // args
 	)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	_, err = rmbq.Chanel.QueueDeclare(
@@ -126,7 +128,7 @@ func initExchangeAndQueue(rmbq *RabbitMQ, exchangeName, queueName, routingKey st
 }
 
 func (that *RabbitMQ) Send(message []byte, exchangeName, routingKey string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	err := that.Chanel.PublishWithContext(ctx,
