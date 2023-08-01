@@ -1,24 +1,22 @@
-package storage
+package repository
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/model"
-	"bitcoin_checker_api/internal/repository"
 )
 
-type Repository struct {
+type LocalRepository struct {
 	Records    []*model.User
 	RecordsMap map[string]struct{}
 	Cfg        *config.Storage
 }
 
-func NewStorageRepository(cfg *config.Storage) (repository.Repository, error) {
-	sr := &Repository{
+func NewLocalRepository(cfg *config.Storage) (*LocalRepository, error) {
+	sr := &LocalRepository{
 		Cfg:        cfg,
 		RecordsMap: make(map[string]struct{}),
 		Records:    make([]*model.User, 0),
@@ -54,9 +52,9 @@ func NewStorageRepository(cfg *config.Storage) (repository.Repository, error) {
 	return sr, nil
 }
 
-func (that *Repository) Write(email string) error {
-	if _, ok := that.RecordsMap[email]; ok {
-		return fmt.Errorf("e-mail вже є в базі даних")
+func (that *LocalRepository) Write(email string) error {
+	if ok := that.ExistsByEmail(email); ok {
+		return ErrRecordExists
 	}
 
 	that.RecordsMap[email] = struct{}{}
@@ -74,6 +72,19 @@ func (that *Repository) Write(email string) error {
 	return nil
 }
 
-func (that *Repository) ReadAll() []*model.User {
+func (that *LocalRepository) ReadAll() []*model.User {
 	return that.Records
+}
+
+func (that *LocalRepository) RemoveAll() error {
+	err := os.Remove(that.Cfg.Path)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (that *LocalRepository) ExistsByEmail(e string) bool {
+	_, ok := that.RecordsMap[e]
+	return ok
 }

@@ -2,9 +2,9 @@ package email
 
 import (
 	"fmt"
-	"log"
 	"net/http"
-	"os"
+
+	"bitcoin_checker_api/internal/model"
 
 	"bitcoin_checker_api/config"
 
@@ -27,23 +27,23 @@ func NewService(c *config.EmailService) *Service {
 	}
 }
 
-func (that *Service) Send(email, data string) error {
+const htmlTemplate = "Actual exchange rate %s to %s equal %f, this information actual on %s"
+
+func (that *Service) Send(email string, er *model.ExchangeRate) error {
 	from := mail.NewEmail(that.FromName, that.FromAddress)
 	subject := "Current exchange rate by your subscription"
 	to := mail.NewEmail("Dear customer", email)
 	plainTextContent := "Current exchange rate"
-	htmlContent := data
+	htmlContent := fmt.Sprintf(htmlTemplate, er.BaseCurrency, er.QuoteCurrency, er.Price, er.Date)
 	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
 	client := sendgrid.NewSendClient(that.APIKey)
 	response, err := client.Send(message)
-	if err != nil || !SuccessSentStatusCode(response.StatusCode) {
-		fmt.Fprintf(os.Stderr, "error EmailService.Send: %s.(Status code: %d)", err, response.StatusCode)
+	if err != nil || !that.SuccessSentStatusCode(response.StatusCode) {
 		return fmt.Errorf("error: %w, status code: %d ", err, response.StatusCode)
 	}
-	log.Printf("Email sended to %s successfuly.(Status code: %d)", email, response.StatusCode)
 	return nil
 }
 
-func SuccessSentStatusCode(statusCode int) bool {
+func (that *Service) SuccessSentStatusCode(statusCode int) bool {
 	return statusCode == http.StatusOK || statusCode == http.StatusCreated || statusCode == http.StatusAccepted
 }

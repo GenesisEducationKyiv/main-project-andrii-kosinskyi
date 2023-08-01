@@ -2,66 +2,65 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
-	"bitcoin_checker_api/config"
+	"bitcoin_checker_api/internal/model"
+	"bitcoin_checker_api/internal/pkg/mapper"
+
 	"bitcoin_checker_api/internal/pkg/email"
 	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/repository"
-	"bitcoin_checker_api/internal/validator"
 )
 
 type UseCase struct {
 	repository   repository.Repository
 	exchangeRate exchangerate.ExchangeRater
+	mapper       mapper.Mapper
 	emailService email.Emailer
 }
 
-type Config struct {
-	ExchangeRate *config.ExchangeRate
-	EmailService *config.EmailService
-}
-
-func NewUseCase(c *Config, r repository.Repository) *UseCase {
+func NewUseCase(r repository.Repository, er exchangerate.ExchangeRater, m mapper.Mapper, es email.Emailer) *UseCase {
 	return &UseCase{
 		repository:   r,
-		exchangeRate: exchangerate.NewExchangeRate(c.ExchangeRate),
-		emailService: email.NewService(c.EmailService),
+		exchangeRate: er,
+		mapper:       m,
+		emailService: es,
 	}
 }
 
 func (that *UseCase) SubscribeEmailOnExchangeRate(e string) error {
-	validEmail, ok := validator.ValidMailAddress(e)
-	if !ok {
-		return fmt.Errorf("invalid Email address: %s", e)
-	}
-	return that.repository.Write(validEmail)
+	return that.repository.Write(e)
 }
 
 func (that *UseCase) SendEmailsWithExchangeRate(ctx context.Context) error {
 	users := that.repository.ReadAll()
 	if len(users) == 0 {
-		return errors.New("storage is empty")
+		return ErrUseCaseEmptyUserList
 	}
 
-	data, err := that.ExchangeRate(ctx)
+	exchangeRate, err := that.ExchangeRate(ctx)
 	if err != nil {
 		return err
 	}
 
 	for _, user := range users {
-		if err = that.emailService.Send(user.Email, data); err != nil {
+		if err = that.emailService.Send(user.Email, exchangeRate); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (that *UseCase) ExchangeRate(ctx context.Context) (string, error) {
+func (that *UseCase) ExchangeRate(ctx context.Context) (*model.ExchangeRate, error) {
 	data, err := that.exchangeRate.Get(ctx)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return data, nil
+
+	exchangeRate, err := that.mapper.Map(data)
+	if err != nil {
+		return nil, fmt.Errorf("error from %s : %w", that.mapper.Name(), err)
+	}
+
+	return exchangeRate, nil
 }

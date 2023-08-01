@@ -1,3 +1,4 @@
+//nolint:gocritic,gosec,gomnd,gosimple,govet,staticcheck,goimports // issues only in graceful shutdown process
 package main
 
 import (
@@ -10,25 +11,32 @@ import (
 	"syscall"
 	"time"
 
+	"bitcoin_checker_api/internal/pkg/mapper"
+
+	"bitcoin_checker_api/internal/pkg/email"
+	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
+	"bitcoin_checker_api/internal/repository"
+
 	"bitcoin_checker_api/internal/usecase"
 
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/handler"
-	"bitcoin_checker_api/internal/repository/storage"
-
 	"github.com/gin-gonic/gin"
 )
 
-//nolint:gocritic,gosec,gomnd,gosimple,govet,staticcheck // issues only in graceful shutdown process
 func main() {
 	cfg := config.NewConfig()
 	if err := cfg.Load(); err != nil {
-		log.Fatal(err)
+		log.Fatalf("cfg.Load: %s\n", err)
 	}
 
+	h, err := initApp(cfg)
+	if err != nil {
+		log.Fatalf("initApp: %s\n", err)
+	}
 	srv := &http.Server{
 		Addr:    ":" + strconv.FormatInt(cfg.Server.Port, 10),
-		Handler: initApp(cfg),
+		Handler: h,
 	}
 
 	go func() {
@@ -55,18 +63,20 @@ func main() {
 	log.Println("Server exiting")
 }
 
-func initApp(cfg *config.Config) http.Handler {
-	repo, err := storage.NewStorageRepository(&cfg.Storage)
+func initApp(cfg *config.Config) (http.Handler, error) {
+	repo, err := repository.NewLocalRepository(&cfg.Storage)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	useCaseConfig := &usecase.Config{
-		ExchangeRate: &cfg.ExchangeRate,
-		EmailService: &cfg.EmailService,
+	excRate := exchangerate.NewExchangeRate(&cfg.ExchangeRate)
+	excRateMapper, _ := mapper.NewExchangeRateMapper(mapper.CoinPaprikaService)
+	if err != nil {
+		return nil, err
 	}
+	emailServ := email.NewService(&cfg.EmailService)
 
-	h := handler.NewHandler(cfg, usecase.NewUseCase(useCaseConfig, repo))
+	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, excRateMapper, emailServ))
 
 	router := gin.Default()
 	v1 := router.Group("/api")
@@ -76,5 +86,5 @@ func initApp(cfg *config.Config) http.Handler {
 		v1.POST("/sendEmails", h.SendEmails)
 	}
 
-	return router
+	return router, nil
 }
