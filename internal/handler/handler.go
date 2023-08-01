@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"bitcoin_checker_api/internal/renderer"
+
 	"bitcoin_checker_api/internal/validator"
 
 	"bitcoin_checker_api/internal/usecase"
@@ -14,12 +16,14 @@ import (
 )
 
 type Handler struct {
-	useCase *usecase.UseCase
+	useCase       *usecase.UseCase
+	renderService *renderer.Render
 }
 
-func NewHandler(u *usecase.UseCase) *Handler {
+func NewHandler(u *usecase.UseCase, r *renderer.Render) *Handler {
 	return &Handler{
-		useCase: u,
+		useCase:       u,
+		renderService: r,
 	}
 }
 
@@ -32,11 +36,11 @@ func (that *Handler) Rate(c *gin.Context) {
 	exchangeRate, err := that.useCase.ExchangeRate(c)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", handlerEndpoint(c), err)
-		c.IndentedJSON(http.StatusBadRequest, ErrInvStatVal)
+		that.renderService.SendError(c, http.StatusBadRequest, ErrInvStatVal)
 		return
 	}
 	log.Printf("endpoint: %s response: %v", handlerEndpoint(c), exchangeRate)
-	c.IndentedJSON(http.StatusOK, exchangeRate)
+	that.renderService.SendSuccess(c, exchangeRate)
 }
 
 func (that *Handler) Subscription(c *gin.Context) {
@@ -44,16 +48,16 @@ func (that *Handler) Subscription(c *gin.Context) {
 	email := c.PostForm("email")
 	if err := validator.ValidMailAddress(email); err != nil {
 		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", handlerEndpoint(c), err)
-		c.IndentedJSON(http.StatusConflict, ErrInvSubEmail)
+		that.renderService.SendError(c, http.StatusConflict, ErrInvSubEmail)
 		return
 	}
 	if err := that.useCase.SubscribeEmailOnExchangeRate(email); err != nil {
 		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", handlerEndpoint(c), err)
-		c.IndentedJSON(http.StatusConflict, ErrInvSubEmail)
+		that.renderService.SendError(c, http.StatusConflict, ErrInvSubEmail)
 		return
 	}
 	log.Printf("endpoint: %s response: %s", handlerEndpoint(c), EmailAdded)
-	c.IndentedJSON(http.StatusOK, EmailAdded)
+	that.renderService.SendSuccess(c, EmailAdded)
 }
 
 func (that *Handler) SendEmails(c *gin.Context) {
@@ -61,9 +65,9 @@ func (that *Handler) SendEmails(c *gin.Context) {
 	err := that.useCase.SendEmailsWithExchangeRate(c)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "endpoint: %s error: %s", handlerEndpoint(c), err)
-		c.IndentedJSON(http.StatusConflict, ErrEmailsNotSent)
+		that.renderService.SendError(c, http.StatusConflict, ErrEmailsNotSent)
 		return
 	}
 	log.Printf("endpoint: %s response: %s", handlerEndpoint(c), EmailsSent)
-	c.IndentedJSON(http.StatusOK, EmailsSent)
+	that.renderService.SendSuccess(c, EmailsSent)
 }
