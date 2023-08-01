@@ -26,8 +26,7 @@ type LogMessage struct {
 	Message  string    `json:"msg"`
 }
 
-//nolint:gochecknoglobals
-var levelMap map[int]string
+var levelMap map[int]string //nolint:gochecknoglobals
 
 func NewLog(brokerSrv broker.Service) *DefaultLog {
 	levelMap = map[int]string{
@@ -51,8 +50,7 @@ func (that *DefaultLog) printLog(level int, msg string) {
 
 	if level == ErrorLevel {
 		fmt.Fprint(os.Stderr, string(bytes)+"\n")
-		//nolint:typecheck
-		if that.brokerSrv != nil {
+		if that.brokerSrv != nil { //nolint:typecheck
 			err = that.brokerSrv.SendErr(bytes)
 			if err != nil {
 				fmt.Fprint(os.Stderr, err.Error()+"\n")
@@ -61,8 +59,8 @@ func (that *DefaultLog) printLog(level int, msg string) {
 	} else {
 		fmt.Fprint(os.Stdout, string(bytes)+"\n")
 	}
-	//nolint:typecheck
-	if that.brokerSrv != nil {
+
+	if that.brokerSrv != nil { //nolint:typecheck
 		err = that.brokerSrv.Send(bytes)
 		if err != nil {
 			fmt.Fprint(os.Stderr, err.Error()+"\n")
