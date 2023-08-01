@@ -50,6 +50,22 @@ type EmailService struct {
 	FromName    string `toml:"from_name"`
 }
 
+type Logger struct {
+	Broker           string `toml:"broker"`
+	RabbitmqExchange string `toml:"rabbitmq_exchange"`
+	RabbitmqQueue    string `toml:"rabbitmq_queue"`
+}
+
+type RabbitMQ struct {
+	User         string `toml:"user"`
+	Password     string `toml:"password"`
+	Host         string `toml:"host"`
+	Port         string `toml:"port"`
+	RoutingKey   string `toml:"routing_key_logs"`
+	LogsExchange string `toml:"logs_exchange"`
+	LogsQueue    string `toml:"logs_queue"`
+}
+
 func (that *EmailService) Empty() error {
 	if that.APIKey == "" || that.FromName == "" || that.FromAddress == "" {
 		return ErrEmptyConfig
@@ -71,6 +87,9 @@ type Config struct {
 	ExchangeRate ExchangeRate
 	Storage      Storage
 	EmailService EmailService
+	Logger       Logger
+	RabbitMQ     RabbitMQ
+	// Kafka        Broker
 }
 
 func (that *Config) Load() error {

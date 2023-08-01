@@ -13,6 +13,10 @@ docker:
 	@docker build -t bitcoin-checker-app . -f deployments/Dockerfile
 	@docker run -d -p 8080:8080 bitcoin-checker-app
 
+.PHONY: docker-compose
+docker-compose:
+	@docker compose -f ./deployments/docker-compose.yml up --build --always-recreate-deps
+
 .PHONY: test
 test:
 	@go test -v ./... -cover
@@ -45,3 +49,7 @@ subscribeInvalid:
 .PHONY: sendMails
 sendMails:
 	curl -X POST http://localhost:8080/api/sendEmails
+
+.PHONY: rbmq_logs
+rbmq_logs:
+	@bash cmd/consume-message.sh

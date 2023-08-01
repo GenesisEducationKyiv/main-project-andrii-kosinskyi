@@ -11,17 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"bitcoin_checker_api/internal/renderer"
-
-	"bitcoin_checker_api/internal/pkg/email"
-	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
-	"bitcoin_checker_api/internal/repository"
-
-	"bitcoin_checker_api/internal/usecase"
+	"bitcoin_checker_api/internal"
 
 	"bitcoin_checker_api/config"
-	"bitcoin_checker_api/internal/handler"
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -30,7 +22,7 @@ func main() {
 		log.Fatalf("cfg.Load: %s\n", err)
 	}
 
-	h, err := initApp(cfg)
+	h, err := internal.InitApp(cfg)
 	if err != nil {
 		log.Fatalf("initApp: %s\n", err)
 	}
@@ -61,36 +53,4 @@ func main() {
 		log.Println("timeout of 5 seconds.")
 	}
 	log.Println("Server exiting")
-}
-
-func initApp(cfg *config.Config) (http.Handler, error) {
-	repo, err := repository.NewLocalRepository(&cfg.Storage)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	excRate, err := exchangerate.NewExchangeRate(cfg.ExchangeRate.Coinpaprika)
-	if err != nil {
-		log.Fatal(err)
-		return nil, err
-	}
-	excRateBinance, err := exchangerate.NewExchangeRate(cfg.ExchangeRate.Binance)
-	if err != nil {
-		log.Fatal(err)
-		return nil, err
-	}
-	excRate.SetNext(excRateBinance)
-	emailServ := email.NewService(&cfg.EmailService)
-	renderServ := renderer.NewRender()
-	h := handler.NewHandler(usecase.NewUseCase(repo, excRate, emailServ), renderServ)
-
-	router := gin.Default()
-	v1 := router.Group("/api")
-	{
-		v1.GET("/rate", h.Rate)
-		v1.POST("/subscribe", h.Subscription)
-		v1.POST("/sendEmails", h.SendEmails)
-	}
-
-	return router, nil
 }

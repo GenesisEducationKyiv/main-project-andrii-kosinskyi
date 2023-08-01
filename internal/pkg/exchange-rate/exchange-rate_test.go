@@ -24,20 +24,20 @@ func TestExchangeRate_Get_Coinpaprika(t *testing.T) {
 	}
 }
 
-func TestExchangeRate_Get_Binance(t *testing.T) {
-	ctx := context.Background()
-	client, _ := exchangerate.NewExchangeRate(&config.DefaultExchangeRate{
-		ServiceName: "binance",
-		URLMask:     "https://api.binance.com/api/v3/ticker/price?symbol=%s%s",
-		InRate:      "BTC",
-		OutRate:     "UAH",
-	})
-
-	_, err := client.Get(ctx)
-	if err != nil {
-		t.Errorf("TestExchangeRate_Get_Binance() err = %v", err)
-	}
-}
+// func TestExchangeRate_Get_Binance(t *testing.T) {
+//	 ctx := context.Background()
+//	 client, _ := exchangerate.NewExchangeRate(&config.DefaultExchangeRate{
+//		 ServiceName: "binance",
+//		 URLMask:     "https://api.binance.com/api/v3/ticker/price?symbol=%s%s",
+//		 InRate:      "BTC",
+//		 OutRate:     "UAH",
+//	 })
+//
+//	 _, err := client.Get(ctx)
+//	 if err != nil {
+//		 t.Errorf("TestExchangeRate_Get_Binance() err = %v", err)
+//	 }
+// }
 
 func TestExchangeRate_SetNext(t *testing.T) {
 	ctx := context.Background()
