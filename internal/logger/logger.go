@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"bitcoin_checker_api/internal/pkg/broker"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -15,6 +16,7 @@ const (
 )
 
 type DefaultLog struct {
+	brokerSrv broker.Service
 }
 
 type LogMessage struct {
@@ -25,22 +27,23 @@ type LogMessage struct {
 
 var levelMap map[int]string
 
-func NewLog() *DefaultLog {
+func NewLog(brokerSrv broker.Service) *DefaultLog {
 	levelMap = map[int]string{
 		1: "DEBUG",
 		2: "INFO",
 		3: "ERROR",
 	}
 
-	return &DefaultLog{}
+	return &DefaultLog{brokerSrv: brokerSrv}
 }
 
-func print(level int, msg string) {
+func (that *DefaultLog) print(level int, msg string) {
 	bytes, err := json.Marshal(&LogMessage{
 		Time:     time.Now(),
 		LogLevel: levelMap[level],
 		Message:  msg,
 	})
+
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 	}
@@ -50,16 +53,23 @@ func print(level int, msg string) {
 	} else {
 		fmt.Fprint(os.Stdout, string(bytes)+"\n")
 	}
+
+	if that.brokerSrv != nil {
+		err := that.brokerSrv.Send(bytes)
+		if err != nil {
+			fmt.Fprint(os.Stderr, err.Error()+"\n")
+		}
+	}
 }
 
 func (that *DefaultLog) Debug(ctx context.Context, msg string) {
-	print(DebugLevel, msg)
+	that.print(DebugLevel, msg)
 }
 
 func (that *DefaultLog) Info(ctx context.Context, msg string) {
-	print(InfoLevel, msg)
+	that.print(InfoLevel, msg)
 }
 
 func (that *DefaultLog) Error(ctx context.Context, msg string) {
-	print(ErrorLevel, msg)
+	that.print(ErrorLevel, msg)
 }

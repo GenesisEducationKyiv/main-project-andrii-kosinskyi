@@ -4,6 +4,7 @@ import (
 	"bitcoin_checker_api/config"
 	"bitcoin_checker_api/internal/handler"
 	"bitcoin_checker_api/internal/logger"
+	"bitcoin_checker_api/internal/pkg/broker"
 	"bitcoin_checker_api/internal/pkg/email"
 	exchangerate "bitcoin_checker_api/internal/pkg/exchange-rate"
 	"bitcoin_checker_api/internal/renderer"
@@ -45,9 +46,31 @@ func initServices(cfg *config.Config) (*handler.Handler, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	rabbitmqConn, err := broker.NewRabbitMQ(cfg.RabbitMQ)
+	if err != nil {
+		return nil, err
+	}
+
+	kafkaConn, err := broker.NewRabbitMQ(cfg.RabbitMQ)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Printf("\ncfg.RabbitMQ %#v\n", cfg.RabbitMQ)
+
+	brokerMap := map[string]broker.Connection{
+		broker.RabbitmqBrokerName: rabbitmqConn,
+		broker.KafkaBrokerName:    kafkaConn,
+	}
+	logBroker, err := broker.LoggerServiceFactory(cfg.Logger.Broker, brokerMap)
+	if err != nil {
+		return nil, err
+	}
+	logServ := logger.NewLog(logBroker)
+
 	emailServ := email.NewService(&cfg.EmailService)
 	renderServ := renderer.NewRender()
-	logServ := logger.NewLog()
 	useCase := usecase.NewUseCase(repoServ, excRateServ, emailServ)
 
 	return handler.NewHandler(useCase, renderServ, logServ), nil

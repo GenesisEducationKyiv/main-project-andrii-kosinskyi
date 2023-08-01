@@ -20,3 +20,19 @@ out_rate_name = "UAH"
 api_key="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"
 from_name="Andrii Kosinskyi"
 from_address="kosinskiy.andrey@ukr.net"
+
+[logger]
+broker="rabbitmq"
+
+[rabbitmq]
+user="myuser"
+password="mypassword"
+host ="rabbitmq" #localhost"
+port="5672"
+logs_exchange = "logs-exchange"
+logs_queue="logs-queue"
+
+[kafka]
+user="myuser"
+password="mypassword"
+port="5672"
